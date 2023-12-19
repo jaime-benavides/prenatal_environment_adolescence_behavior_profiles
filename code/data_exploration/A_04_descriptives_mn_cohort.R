@@ -1,22 +1,10 @@
+# create descriptives for the paper
+# Jaime Benavides 6/8/23
 # First step to load packages etc.
 rm(list=ls())
-.libPaths(c(.libPaths(), "/home/jbenavides/R/x86_64-pc-linux-gnu-library/4.1"))
-library(rvest)
-library(qdapRegex)
-library(stringi)
-library(rexposome)
-# for PCP
-library(PCPhelpers)
-library(pcpr)
-library(foreach)
-library(tictoc) # for timing
-library(plotly)    # for visualizing the gridsearches
-library(progressr) # needed for progress bars with the new PCP gridsearch
-library(tidyverse)
-
 # 1a Declare root directory, folder locations and load essential stuff
 project.folder = paste0(print(here::here()),'/')
-source(paste0(project.folder,'0_01_init_directory_structure.R'))
+source(paste0(project.folder,'init_directory_structure.R'))
 source(paste0(functions.folder,'script_initiate.R'))
 
 exposures <- readRDS(paste0(generated.data.folder, "exposures_for_profiles_rev_shs_rev_valid_part.rds"))
@@ -47,25 +35,13 @@ wasi <- wasi[which(complete.cases(wasi)),]
 wasi <- wasi[-which(duplicated(wasi$SID)),]
 toni <- haven::read_sav(paste0(ccceh_data_path, "TONI3.sav"))
 toni<- toni[c("SID", "T3QT")]
-# WASI_PRI_C Perceptual Reasoning Composite Score / WASI_VCI_C Verbal Comprehension Composite Score
 gender <- read_csv(paste0(ccceh_data_path, "GENDER.csv")) 
 gender <- gender[,c("SID", "GENDER")]
-# (1) "Female"
-# (2) "Male"
 wisc <- read_csv(paste0(ccceh_data_path, "WISC.csv"))  # 1,086 x 69 16-18Y: Wechsler Intelligence Scale for Children IV, FSIQ, all scores
 wisc <- wisc[which(wisc$MONTHS==84),] # 523 subjects
-# WSC_BYR "Birth Year"
-# "WSC_DS" Digit Span scaled score the more the better
-# WSC_COD "Coding scaled score the more the better
 wisc <- wisc[,c("SID", "WSC_DS", "WSC_COD")]
-# wasi <- read_csv(paste0(ccceh_data_path, "WASI.csv"))  # 364 x 55 (Wechsler Abbreviated Scale of Intelligence)
-# wasi <- wasi[,c("CEHID", "WASI_FSIQ4_C")]
-# WASI_FSIQ4_C "Full Scale-4 IQ Composite Score" the more the better
 home <- read_csv(paste0(ccceh_data_path, "HOME.csv"))  # 545 x 19 CEH: Early Childhood Home Inventory
-#HOMETOT HOMETOT "Total Score" the more the better
 home <- home[,c("SID", "HOMETOT")]
-# puberty <- read_csv(paste0(ccceh_data_path, "PUBERTY.csv"))  # 578 x 18
-# create a dataframe that includes all the combinations of SID contained in the above datasets
 
 prenatal$ethnicity <- as.character(prenatal$ethnicity)
 

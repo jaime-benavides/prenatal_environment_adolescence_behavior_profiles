@@ -1,15 +1,10 @@
-# preparing exposure data 
-# jaime benavides 6/8/22
+# create a dataframe containing all the exposures for each subject
+# Jaime Benavides 6/8/22
 # First step to load packages etc.
 rm(list=ls())
-.libPaths(c(.libPaths(), "/home/jbenavides/R/x86_64-pc-linux-gnu-library/4.1", 
-            "/home/jbenavides/R/x86_64-pc-linux-gnu-library/4.2"))
-library(rvest)
-library(qdapRegex)
-library(stringi)
 # 1a Declare root directory, folder locations and load essential stuff
 project.folder = paste0(print(here::here()),'/')
-source(paste0(project.folder,'0_01_init_directory_structure.R'))
+source(paste0(project.folder,'init_directory_structure.R'))
 source(paste0(functions.folder,'script_initiate.R'))
 
 # data paths
@@ -38,9 +33,7 @@ wppsi_sw <- read_csv(paste0(ccceh_data_path, "WPPSI_SW.csv")) # 391 x 68 / sibid
 bpa <- read_csv(paste0(ccceh_data_path, "BPA.csv"))  # 568 x 17
 home <- read_csv(paste0(ccceh_data_path, "HOME.csv"))  # 545 x 19
 month24 <- read_csv(paste0(ccceh_data_path, "MONTH24.csv")) # 566 x 779
-# uphthdel <- read_csv(paste0(data_path, "additional_phthalate_data/", "UPHTHDEL.csv")) 63 subjects
 uphthm1 <- read_csv(paste0(data_path, "additional_phthalate_data/", "UPHTHM1.csv"))
-# uphthm2 <- read_csv(paste0(data_path, "additional_phthalate_data/", "UPHTHM2.csv")) 53 subjects
 uphthm5 <- read_csv(paste0(data_path, "additional_phthalate_data/", "UPHTHM5.csv")) # 381
 uphthm6 <- read_csv(paste0(data_path, "additional_phthalate_data/", "UPHTHM6.csv")) # 486
 uphthm7 <- read_csv(paste0(data_path, "additional_phthalate_data/", "UPHTHM7.csv")) # 320
@@ -68,10 +61,6 @@ pah <- read_csv(paste0(ccceh_data_path, "PAHtot.csv"))
 pah_all <- read_csv(paste0(ccceh_data_path, "PAH.csv")) 
 adducts_month0 <- read_csv(paste0(ccceh_data_path, "ADDUCTS.csv")) # this is in the codebook
 pbde_month0 <- read_csv(paste0(ccceh_data_path, "MN_PBDE_longformat.csv"))
-# use the ng/g lipid and for those below limit of detection start with nas and make a test with assigning lod
-# pbde_wide_month0 <- read_csv(paste0(ccceh_data_path, "MN_PBDE_wideformat.csv"))
-# Polybrominated Diphenyl Ethers (PBDEs)
-# load ysr_data
               
 # read codebook
 simple <- rvest::read_html(paste0(data_path, "ceh_codebook.html"))
@@ -310,23 +299,9 @@ pah_items <- colnames(pah)[3:length(colnames(pah))]
 ## Phthalates
 
 uphthm1_vars <- gsub("R1U", "", colnames(uphthm1)[which(grepl("R1U", colnames(uphthm1), fixed = TRUE))])
-uphthm5_vars <- gsub("R5U", "", colnames(uphthm5)[which(grepl("R5U", colnames(uphthm5), fixed = TRUE))])
-uphthm6_vars <- gsub("R6U", "", colnames(uphthm6)[which(grepl("R6U", colnames(uphthm6), fixed = TRUE))])
-uphthm7_vars <- gsub("R7U", "", colnames(uphthm7)[which(grepl("R7U", colnames(uphthm7), fixed = TRUE))])
-
-uphthm1_vars %in%uphthm7_vars # "MMP" not present in other visits, only prenatal
-
-
-
-phthal_tab <- codebook[which(grepl("R1U", codebook$variable_name, fixed=TRUE)
-                             | grepl("R5U", codebook$variable_name, fixed=TRUE)
-                             | grepl("R6U", codebook$variable_name, fixed=TRUE)
-                             | grepl("R7U", codebook$variable_name, fixed=TRUE)),]
-
-
-phthal_time_points <- c("0", "60", "72" , "84")
-
-phthal_items <- unique(c(uphthm1_vars, uphthm5_vars, uphthm6_vars, uphthm7_vars))
+phthal_tab <- codebook[which(grepl("R1U", codebook$variable_name, fixed=TRUE)),]
+phthal_time_points <- c("0")
+phthal_items <- unique(c(uphthm1_vars))
 
 df_phthal <- data.frame()
 desc_phthal <- data.frame()
@@ -361,8 +336,6 @@ for (p in 1:length(phthal_time_points)){
   }
   df_phthal <-   dplyr::bind_rows(df_phthal, df_loc)
 }
-#saveRDS(df_phthal, paste0(generated.data.folder, "phthalates.rds"))
-df_phthal <- readRDS(paste0(generated.data.folder, "phthalates.rds"))
 # specific gravity correction
 df_phthal_corr <- dplyr::left_join(df_phthal, sgm1[,c('SID', 'M1SG')], by = 'SID')
 df_phthal_corr$specific_gravity_corr <- ifelse(!is.na(df_phthal_corr$M1SG), "yes", "no")
@@ -403,21 +376,17 @@ for (p in 1:length(phthal_time_points)){
   }
   df_phthal_lod <-   dplyr::bind_rows(df_phthal_lod, df_loc)
 }
-#saveRDS(df_phthal_lod, paste0(generated.data.folder, "phthalates_below_lod.rds")) # 1 = below lod
-df_phthal_lod <- readRDS(paste0(generated.data.folder, "phthalates_below_lod.rds")) # 1 = below lod
+saveRDS(df_phthal_lod, paste0(generated.data.folder, "phthalates_below_lod.rds")) # 1 = below lod
 # check if lod > 50%
 n <- numeric()
 for(p in 3:14){
 n[p] <- 100*(length(which(df_phthal_lod[,p] == 1))/nrow(df_phthal_lod))
 }
+
 ## BPA bisphenols
 bpa_tab <- codebook[which(grepl("BPA", codebook$variable_name, fixed=TRUE)),]
 #kylie: The BPA file that was sent has BPA measured in urine from the prenatal period through age 7. (M1UBPA though M7UBPA) There are also flag and date variables included in the file.
 bpa_0_vars <- c("M1UBPA", "FM1UBPA") # maternal, well Maternal Urine BPA result ng/ml
-bpa_36_vars <- c("M5UBPA", "FM5UBPA") # 36 month Urine BPA result ng/ml"
-bpa_60_vars <- c("M6UBPA", "FM6UBPA") # 60 month Urine BPA result ng/ml"
-bpa_84_vars <- c("M7UBPA", "FM7UBPA") # 7 year Urine BPA result ng/ml
-
 bpa_time_points <- qdapRegex::ex_between(ls(pattern = "bpa_"), "_", "_vars")[1:4]
 bpa_time_points <- as.character(bpa_time_points)
 bpa_items <- gsub("M1", "", bpa_0_vars)
@@ -434,11 +403,7 @@ for (p in 1:length(bpa_time_points)){
   ids <- tab$SID
   per_month <- as.numeric(per_loc)
   df_loc <- data.frame(SID = ids, month = per_month)
-    # todo: what do we do with values below limit of detection - given 0.2
-    if(per_month == 0){col_n = "M1UBPA"
-    } else if (per_month == 36){col_n = "M5UBPA"
-    } else if (per_month == 60){col_n = "M6UBPA"
-    } else if (per_month == 84){col_n = "M7UBPA"}
+    if(per_month == 0){col_n = "M1UBPA"}
   if(col_n %in% names(tab)){
     df_loc <- dplyr::left_join(df_loc, tab[,c("SID", col_n)], by = "SID")
     colnames(df_loc)[length(colnames(df_loc))] <- bpa_items[1]
@@ -451,8 +416,8 @@ for (p in 1:length(bpa_time_points)){
   df_bpa <-   dplyr::bind_rows(df_bpa, df_loc)
   }
 
-# saveRDS(df_bpa, paste0(generated.data.folder, "bisphenols.rds"))
-df_bpa <- readRDS(paste0(generated.data.folder, "bisphenols.rds"))
+# specific gravity correction
+
 df_bpa_corr <- dplyr::left_join(df_bpa, sgm1[,c('SID', 'M1SG')], by = 'SID')
 df_bpa_corr$specific_gravity_corr <- ifelse(!is.na(df_bpa_corr$M1SG), "yes", "no")
 df_bpa_corr[which(df_bpa_corr$month != 0), "specific_gravity_corr"] <- "no"
@@ -474,10 +439,7 @@ for (p in 1:length(bpa_time_points)){
   per_month <- as.numeric(per_loc)
   df_loc <- data.frame(SID = ids, month = per_month)
   # todo: what do we do with values below limit of detection - given 0.2
-  if(per_month == 0){col_n = "FM1UBPA"
-  } else if (per_month == 36){col_n = "FM5UBPA"
-  } else if (per_month == 60){col_n = "FM6UBPA"
-  } else if (per_month == 84){col_n = "FM7UBPA"}
+  if(per_month == 0){col_n = "FM1UBPA"}
   if(col_n %in% names(tab)){
     df_loc <- dplyr::left_join(df_loc, tab[,c("SID", col_n)], by = "SID")
     colnames(df_loc)[length(colnames(df_loc))] <- bpa_items[1]
@@ -490,13 +452,13 @@ for (p in 1:length(bpa_time_points)){
   df_bpa_lod <-   dplyr::bind_rows(df_bpa_lod, df_loc)
 }
 
-#saveRDS(df_bpa_lod, paste0(generated.data.folder, "bisphenols_below_lod.rds"))
-df_bpa_lod <- readRDS(paste0(generated.data.folder, "bisphenols_below_lod.rds"))
+saveRDS(df_bpa_lod, paste0(generated.data.folder, "bisphenols_below_lod.rds"))
 # check if lod > 50%
 length(which(df_bpa_lod$UBPA ==1)) / length(df_bpa_lod$UBPA)
+
 # initiative dataframe with subject ids
-tab_order <- c("PRENATAL", "MONTH12", "MONTH24", "MONTH36", "MONTH60", "MONTH84", "YEAR09", "YEAR11", "YEAR14")
-period <- c("0", "12", "24", "36", "60", "84", "Y9", "Y11", "Y14")
+tab_order <- c("PRENATAL")
+period <- c("0")
 df_mh <- data.frame()
 desc_mh <- data.frame()
 family <- "material_hardship"
@@ -509,7 +471,6 @@ for (p in 1:length(mh_time_points)){
   tab <- get(tab_obj)
   ids <- tab$SID
   if(is.na(as.numeric(per_loc))){
-    if(per_loc == "Y9"){per_month <- 108} else if(per_loc == "Y11"){per_month <- 132} else if(per_loc == "Y14"){per_month <- 168}
   } else {
     per_month <- as.numeric(per_loc)
   }
@@ -542,219 +503,6 @@ for (p in 1:length(mh_time_points)){
 }
 saveRDS(df_mh, paste0(generated.data.folder, "material_hardship.rds"))
 
-
-
-var <- unique(colnames(df_mh[,-c(1,2)]))[1]
-codebook[which(grepl(var, codebook$variable_name, fixed=TRUE)), ]
-
-# mother's perceived stress
-df_els <- data.frame()
-desc_els <- data.frame()
-family <- "mother's perceived stress"
-for (p in 1:length(els_time_points)){
-  if(exists("tab")){rm(tab)}
-  tab_n <- p
-  per_loc <- els_time_points[tab_n] 
-  if(per_loc == "prenatal"){per_loc <- "0"}
-  tab_obj <- tolower(tab_order[which(period == per_loc)])
-  tab <- get(tab_obj)
-  ids <- tab$SID
-  if(is.na(as.numeric(per_loc))){
-    if(per_loc == "Y9"){per_month <- 108} else if(per_loc == "Y11"){per_month <- 132} else if(per_loc == "Y14"){per_month <- 168}
-  } else {
-    per_month <- as.numeric(per_loc)
-  }
-  df_loc <- data.frame(SID = ids, month = per_month)
-  for(t in 1:length(els_items)){
-    item_n <- t
-    name_it <- els_items[item_n]
-    if(per_loc == "Y11"){
-      col_n <- paste0(name_it, per_loc)  
-    } else if (per_loc == "Y14") {
-      col_n <- paste0(name_it, "Y11")       
-    } else {
-      col_n <- paste0(name_it, "_", per_loc)      
-    }
-    if(col_n %in% names(tab)){
-      desc_els <- rbind(desc_els, data.frame(variable_name = col_n, variable_description = tolower(codebook[which(codebook$variable_name == col_n), "variable_description"]), exposure = name_it, month = per_month, 
-                                           family = family, table_name = tolower(codebook[which(codebook$variable_name == col_n), "dta_table_name"]), 
-                                           table_description = tolower(codebook[which(codebook$variable_name == col_n), "data_table_description"])))
-    df_loc <- dplyr::left_join(df_loc, tab[,c("SID", col_n)], by = "SID")
-    colnames(df_loc)[length(colnames(df_loc))] <- els_items[item_n]
-    if(any(df_loc[,length(colnames(df_loc))] %in% c(8,9))){
-      df_loc[,length(colnames(df_loc))][which(df_loc[,length(colnames(df_loc))] %in% c(8,9))] <- NA
-    }
-      if(name_it %in% c("R01", "R04")){
-      df_loc[,length(colnames(df_loc))] <-  (df_loc[,length(colnames(df_loc))] -1) / 4
-      } else if (name_it %in% c("R05", "R06", "R09", "R12")){
-      df_loc[,length(colnames(df_loc))] <-  (df_loc[,length(colnames(df_loc))] / 4)
-      } else if (name_it %in% c("R02", "R03")){
-      df_loc[,length(colnames(df_loc))] <-  (5 - df_loc[,length(colnames(df_loc))]) / 4
-      } else if (name_it %in% c("R07", "R08", "R10", "R11", "R13", "R14")){
-      df_loc[,length(colnames(df_loc))] <-  (4 - df_loc[,length(colnames(df_loc))]) / 4
-      }
-    } else {
-      print(paste0("column name ", col_n, " is not present in ", tab_obj, " dataset."))
-    }
-  }
-  df_els <-   dplyr::bind_rows(df_els, df_loc)
-}
-saveRDS(df_els, paste0(generated.data.folder, "mother_perceived_stress.rds"))
-
-# neighborhood quality
-
-df_nq <- data.frame()
-desc_nq<- data.frame()
-family <- "neighborhood_quality"
-for (p in 1:length(nq_time_points)){
-  if(exists("tab")){rm(tab)}
-  tab_n <- p
-  per_loc <- nq_time_points[tab_n] 
-  if(per_loc == "prenatal"){per_loc <- "0"}
-  tab_obj <- tolower(tab_order[which(period == per_loc)])
-  tab <- get(tab_obj)
-  ids <- tab$SID
-  if(is.na(as.numeric(per_loc))){
-    if(per_loc == "Y9"){per_month <- 108} else if(per_loc == "Y11"){per_month <- 132} else if(per_loc == "Y14"){per_month <- 168}
-  } else {
-    per_month <- as.numeric(per_loc)
-  }
-  df_loc <- data.frame(SID = ids, month = per_month)
-  for(t in 1:length(nq_items)){
-    item_n <- t
-    name_it <- nq_items[item_n]
-    if(per_loc == "Y11"){
-      col_n <- paste0(name_it, per_loc)  
-    } else if (per_loc == "Y14") {
-      col_n <- paste0(name_it, "Y11")       
-    } else {
-      col_n <- paste0(name_it, "_", per_loc)      
-    }
-    if(col_n %in% names(tab)){
-      desc_nq <- rbind(desc_nq, data.frame(variable_name = col_n, variable_description = tolower(codebook[which(codebook$variable_name == col_n), "variable_description"]), exposure = name_it, month = per_month, 
-                                             family = family, table_name = tolower(codebook[which(codebook$variable_name == col_n), "dta_table_name"]), 
-                                             table_description = tolower(codebook[which(codebook$variable_name == col_n), "data_table_description"])))
-      df_loc <- dplyr::left_join(df_loc, tab[,c("SID", col_n)], by = "SID")
-      colnames(df_loc)[length(colnames(df_loc))] <- nq_items[item_n]
-      if(any(df_loc[,length(colnames(df_loc))] %in% c(8,9))){
-        df_loc[,length(colnames(df_loc))][which(df_loc[,length(colnames(df_loc))] %in% c(8,9))] <- NA
-      }
-      if(name_it %in% c("U02A", "U02C", "U02F")){
-        df_loc[,length(colnames(df_loc))] <-  (4 - df_loc[,length(colnames(df_loc))]) / 4
-      } else if (name_it %in% c("U0413", "U03_5", "U03_6", "U03_4", "U02B", "U02D", "U02E", "U02G", "U02H", "U02I", "U02J", "U02K" , "U02L" , "U03_1", "U03_2", "U03_3")){
-        df_loc[,length(colnames(df_loc))] <-  (df_loc[,length(colnames(df_loc))] / 4)
-      } else if (name_it %in% c("U0401", "U0402", "U0403", "U0405", "U0405A", "U0406", "U0407", "U0408")){ # adapt to U0405A60 
-        df_loc[,length(colnames(df_loc))] <-  (df_loc[,length(colnames(df_loc))] -1)
-      } else if (name_it %in% c("U0404", "U0409", "U0410", "U0411", "U0412")){
-        df_loc[,length(colnames(df_loc))] <-  (2 - df_loc[,length(colnames(df_loc))])
-      }
-    } else {
-      print(paste0("column name ", col_n, " is not present in ", tab_obj, " dataset."))
-    }
-  }
-  df_nq <-   dplyr::bind_rows(df_nq, df_loc)
-}
-saveRDS(df_nq, paste0(generated.data.folder, "neighborhood_quality.rds"))
-
-
-# intimate partner violence (IPV)
-df_ipv <- data.frame()
-desc_ipv<- data.frame()
-family <- "intimate_partner_violence"
-for (p in 1:length(ipv_time_points)){
-  if(exists("tab")){rm(tab)}
-  tab_n <- p
-  per_loc <- ipv_time_points[tab_n] 
-  if(per_loc == "prenatal"){per_loc <- "0"}
-  tab_obj <- tolower(tab_order[which(period == per_loc)])
-  tab <- get(tab_obj)
-  ids <- tab$SID
-  if(is.na(as.numeric(per_loc))){
-    if(per_loc == "Y9"){per_month <- 108} else if(per_loc == "Y11"){per_month <- 132} else if(per_loc == "Y14"){per_month <- 168}
-  } else {
-    per_month <- as.numeric(per_loc)
-  }
-  df_loc <- data.frame(SID = ids, month = per_month)
-  for(t in 1:length(ipv_items)){
-    item_n <- t
-    name_it <- ipv_items[item_n]
-    if(per_loc == "Y11"){
-      col_n <- paste0(name_it, per_loc)  
-    } else if (per_loc == "Y14") {
-      col_n <- paste0(name_it, "Y11")       
-    } else {
-      col_n <- paste0(name_it, "_", per_loc)      
-    }
-    if(col_n %in% names(tab)){
-      desc_ipv <- rbind(desc_ipv, data.frame(variable_name = col_n, variable_description = tolower(codebook[which(codebook$variable_name == col_n), "variable_description"]), exposure = name_it, month = per_month, 
-                                           family = family, table_name = tolower(codebook[which(codebook$variable_name == col_n), "dta_table_name"]), 
-                                           table_description = tolower(codebook[which(codebook$variable_name == col_n), "data_table_description"])))
-      df_loc <- dplyr::left_join(df_loc, tab[,c("SID", col_n)], by = "SID")
-      colnames(df_loc)[length(colnames(df_loc))] <- ipv_items[item_n]
-      if(any(df_loc[,length(colnames(df_loc))] %in% c(8,9))){
-        df_loc[,length(colnames(df_loc))][which(df_loc[,length(colnames(df_loc))] %in% c(8,9))] <- NA
-      }
-      if(name_it %in% c("X01", "X02", "X03", "X04", "X05", "X06", "X07", "X08", "X09", "X10", "X11", "X12")){
-        df_loc[,length(colnames(df_loc))] <-  (df_loc[,length(colnames(df_loc))] / 3)
-      }
-    } else {
-      print(paste0("column name ", col_n, " is not present in ", tab_obj, " dataset."))
-    }
-  }
-  df_ipv <-   dplyr::bind_rows(df_ipv, df_loc)
-}
-saveRDS(df_ipv, paste0(generated.data.folder, "intimate_partner_violence.rds"))
-
-
-# social support 
-df_ss <- data.frame()
-desc_ss<- data.frame()
-family <- "social_support"
-for (p in 1:length(ss_time_points)){
-  if(exists("tab")){rm(tab)}
-  tab_n <- p
-  per_loc <- ss_time_points[tab_n] 
-  if(per_loc == "prenatal"){per_loc <- "0"}
-  tab_obj <- tolower(tab_order[which(period == per_loc)])
-  tab <- get(tab_obj)
-  ids <- tab$SID
-  if(is.na(as.numeric(per_loc))){
-    if(per_loc == "Y9"){per_month <- 108} else if(per_loc == "Y11"){per_month <- 132} else if(per_loc == "Y14"){per_month <- 168}
-  } else {
-    per_month <- as.numeric(per_loc)
-  }
-  df_loc <- data.frame(SID = ids, month = per_month)
-  for(t in 1:length(ss_items)){
-    item_n <- t
-    name_it <- ss_items[item_n]
-    if(per_loc == "Y11"){
-      col_n <- paste0(name_it, per_loc)  
-    } else if (per_loc == "Y14") {
-      col_n <- paste0(name_it, "Y11")       
-    } else {
-      col_n <- paste0(name_it, "_", per_loc)      
-    }
-    if(col_n %in% names(tab)){
-      desc_ss <- rbind(desc_ss, data.frame(variable_name = col_n, variable_description = tolower(codebook[which(codebook$variable_name == col_n), "variable_description"]), exposure = name_it, month = per_month, 
-                                             family = family, table_name = tolower(codebook[which(codebook$variable_name == col_n), "dta_table_name"]), 
-                                             table_description = tolower(codebook[which(codebook$variable_name == col_n), "data_table_description"])))
-      df_loc <- dplyr::left_join(df_loc, tab[,c("SID", col_n)], by = "SID")
-      colnames(df_loc)[length(colnames(df_loc))] <- ss_items[item_n]
-      if(any(df_loc[,length(colnames(df_loc))] %in% c(8,9))){
-        df_loc[,length(colnames(df_loc))][which(df_loc[,length(colnames(df_loc))] %in% c(8,9))] <- NA
-      }
-      if(name_it %in% c("Y01", "Y03", "Y05", "Y06A", "Y06B", "Y06C", "Y06D", "Y06E")){
-        df_loc[,length(colnames(df_loc))] <-  (df_loc[,length(colnames(df_loc))] - 1)
-      }
-    } else {
-      print(paste0("column name ", col_n, " is not present in ", tab_obj, " dataset."))
-    }
-  }
-  df_ss <-   dplyr::bind_rows(df_ss, df_loc)
-}
-saveRDS(df_ss, paste0(generated.data.folder, "social_support.rds"))
-
-
 # demoralization
 df_dem <- data.frame()
 desc_dem<- data.frame()
@@ -768,7 +516,6 @@ for (p in 1:length(dem_time_points)){
   tab <- get(tab_obj)
   ids <- tab$SID
   if(is.na(as.numeric(per_loc))){
-    if(per_loc == "Y9"){per_month <- 108} else if(per_loc == "Y11"){per_month <- 132} else if(per_loc == "Y14"){per_month <- 168}
   } else {
     per_month <- as.numeric(per_loc)
   }
@@ -776,13 +523,7 @@ for (p in 1:length(dem_time_points)){
   for(t in 1:length(dem_items)){
     item_n <- t
     name_it <- dem_items[item_n]
-    if(per_loc == "Y11"){
-      col_n <- paste0(name_it, per_loc)  
-    } else if (per_loc == "Y14") {
-      col_n <- paste0(name_it, "Y11")       
-    } else {
-      col_n <- paste0(name_it, "_", per_loc)      
-    }
+    col_n <- paste0(name_it, "_", per_loc)      
     if(col_n %in% names(tab)){
       desc_dem <- rbind(desc_dem, data.frame(variable_name = col_n, variable_description = tolower(codebook[which(codebook$variable_name == col_n), "variable_description"]), exposure = name_it, month = per_month, 
                                            family = family, table_name = tolower(codebook[which(codebook$variable_name == col_n), "dta_table_name"]), 
@@ -804,58 +545,6 @@ for (p in 1:length(dem_time_points)){
   df_dem <-   dplyr::bind_rows(df_dem, df_loc)
 }
 saveRDS(df_dem, paste0(generated.data.folder, "demoralization.rds"))
-df_dem <- readRDS(paste0(generated.data.folder, "demoralization.rds"))
-
-# discrimination
-df_disc <- data.frame()
-desc_disc<- data.frame()
-family <- "discrimination"
-for (p in 1:length(disc_time_points)){
-  if(exists("tab")){rm(tab)}
-  tab_n <- p
-  per_loc <- disc_time_points[tab_n] 
-  if(per_loc == "prenatal"){per_loc <- "0"}
-  tab_obj <- tolower(tab_order[which(period == per_loc)])
-  tab <- get(tab_obj)
-  ids <- tab$SID
-  if(is.na(as.numeric(per_loc))){
-    if(per_loc == "Y9"){per_month <- 108} else if(per_loc == "Y11"){per_month <- 132} else if(per_loc == "Y14"){per_month <- 168}
-  } else {
-    per_month <- as.numeric(per_loc)
-  }
-  df_loc <- data.frame(SID = ids, month = per_month)
-  for(t in 1:length(disc_items)){
-    item_n <- t
-    name_it <- disc_items[item_n]
-    if(per_loc == "Y11"){
-      col_n <- paste0(name_it, per_loc)  
-    } else if (per_loc == "Y14") {
-      col_n <- paste0(name_it, "Y11")       
-    } else {
-      col_n <- paste0(name_it, "_", per_loc)      
-    }
-    if(col_n %in% names(tab)){
-      desc_disc <- rbind(desc_disc, data.frame(variable_name = col_n, variable_description = tolower(codebook[which(codebook$variable_name == col_n), "variable_description"]), exposure = name_it, month = per_month, 
-                                             family = family, table_name = tolower(codebook[which(codebook$variable_name == col_n), "dta_table_name"]), 
-                                             table_description = tolower(codebook[which(codebook$variable_name == col_n), "data_table_description"])))
-      df_loc <- dplyr::left_join(df_loc, tab[,c("SID", col_n)], by = "SID")
-      colnames(df_loc)[length(colnames(df_loc))] <- disc_items[item_n]
-      if(any(df_loc[,length(colnames(df_loc))] %in% c(8,9))){
-        df_loc[,length(colnames(df_loc))][which(df_loc[,length(colnames(df_loc))] %in% c(8,9))] <- NA
-      }
-      if(name_it %in% c("V01A", "V01B", "V01C", "V01D", "V01E", "V01F", "V01G", "V01H", "V01I")){
-        df_loc[,length(colnames(df_loc))] <-  df_loc[,length(colnames(df_loc))] / 4
-      } else if (name_it %in% c("V02", "V04")){
-        df_loc[,length(colnames(df_loc))] <-  2 - df_loc[,length(colnames(df_loc))] 
-      }
-    } else {
-      print(paste0("column name ", col_n, " is not present in ", tab_obj, " dataset."))
-    }
-  }
-  df_disc <-   dplyr::bind_rows(df_disc, df_loc)
-}
-saveRDS(df_disc, paste0(generated.data.folder, "discrimination.rds"))
-
 
 ## ETS (environmental tobacco smoke)
 
@@ -974,13 +663,6 @@ for(i in 1:length(unique(df_cot$month))){
   }
 saveRDS(df_cot, paste0(generated.data.folder, "smoke_cot_derivative_self_report.rds"))
 
-# ggplot(df_cot, aes(E01)) +
-#   geom_histogram(aes(y=..density..),bins = 30, fill="indianred", col="white")+
-#   geom_density(alpha=.5, fill="#FF6666")
-# 
-# ggplot(df_cot, aes(E10)) +
-#   geom_histogram(aes(y=..density..),bins = 30, fill="indianred", col="white")+
-#   geom_density(alpha=.5, fill="#FF6666")
 
 
 # PAH
@@ -993,10 +675,12 @@ desc_pah <- data.frame(variable_name = "totalpah", variable_description = "total
 # PAH adducts
 
 adducts <- adducts_month0
+# pah adducts not available
 adducts$madducts_avail <- ifelse((adducts$MADDUCTS == -6 | 
                                      adducts$MADDUCTS == -8 | 
                                      adducts$MADDUCTS == -9
                                    ), 1, 0)
+# pah adducts not available as na
 adducts$MADDUCTS[which(adducts$madducts_avail == 1)] <- NA
 
 adducts$cadducts_avail <- ifelse((adducts$CADDUCTS == -6 | 
@@ -1098,5 +782,5 @@ for(i in 1:length(unique(pbde$month))){
 
 
 # save description
-exposure_description <- rbind(desc_mh, desc_disc, desc_dem, desc_ss, desc_ipv, desc_nq,desc_els, desc_pah,desc_ets_der_m, desc_bpa, desc_phthal, desc_pbde_der_m, desc_pah_adducts)
+exposure_description <- rbind(desc_mh, desc_dem, desc_pah,desc_ets_der_m, desc_bpa, desc_phthal, desc_pbde_der_m, desc_pah_adducts)
 saveRDS(exposure_description, paste0(generated.data.folder, "exposure_description.rds"))

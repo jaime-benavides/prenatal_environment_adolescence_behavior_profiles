@@ -1,12 +1,10 @@
+# create a dataframe containing all the exposures for each subject
+# Jaime Benavides 6/8/22
 # First step to load packages etc.
 rm(list=ls())
-.libPaths(c(.libPaths(), "/home/jbenavides/R/x86_64-pc-linux-gnu-library/4.1"))
-library(rvest)
-library(qdapRegex)
-library(stringi)
 # 1a Declare root directory, folder locations and load essential stuff
 project.folder = paste0(print(here::here()),'/')
-source(paste0(project.folder,'0_01_init_directory_structure.R'))
+source(paste0(project.folder,'init_directory_structure.R'))
 source(paste0(functions.folder,'script_initiate.R'))
 
 # data paths
@@ -18,49 +16,6 @@ file_names <- system(paste0("ls ", ccceh_data_path), intern = TRUE)
 file_names <- gsub(".csv", "",file_names)
 table_names <- file_names[-which(grepl( ".sav", file_names, fixed = TRUE))]
 codebook <- readRDS(paste0(generated.data.folder, "codebook_mn.rds"))
-
-# Prodromal Questionnaire - Brief Version, 
-
-# , Swanson, Nolan, and Pelham (SNAP-IV) Questionnaire, 
-# Dupaul Barkley ADHD Rating Scale, 
-# SES questionnaire at age 16 (SES16), 
-# and demographic questionnaires at every age. 
-# load ccceh_data
-# cov? CEH: Babys Medical Record Review bchart <- read_csv(paste0(ccceh_data_path, "BCHART.csv")) # 710 x 30   
-# bchart <- read_csv(paste0(ccceh_data_path, "BCHART.csv")) # to obtain sid in ysr_14
-# exp48hr <- read_csv(paste0(ccceh_data_path, "EXP48HR.csv"))  # 756 x 468
-# cov? month12 <- read_csv(paste0(ccceh_data_path, "MONTH12.csv"))  # 609 x 779
-# cov? month84 <- read_csv(paste0(ccceh_data_path, "MONTH84.csv"))  # 522 x 694
-
-# cov sgm6 <- read_csv(paste0(ccceh_data_path, "SGM6.csv"))  # 496 x 5
-# cov wisc16 <- read_csv(paste0(ccceh_data_path, "WISC16.csv"))  # 317 x 30
-# cov wppsi_sw <- read_csv(paste0(ccceh_data_path, "WPPSI_SW.csv")) # 391 x 68 / sibid 111 sid 368?
-
-# cov home <- read_csv(paste0(ccceh_data_path, "HOME.csv"))  # 545 x 19
-# cov month24 <- read_csv(paste0(ccceh_data_path, "MONTH24.csv")) # 566 x 779
-# cov ses16 <- read_csv(paste0(ccceh_data_path, "SES16.csv"))  # 288 x 179
-# cov: tanner <- read_csv(paste0(ccceh_data_path, "TANNER.csv"))  # 473 x 21
-# cov Wechsler Intelligence Scale for Children wisc <- read_csv(paste0(ccceh_data_path, "WISC.csv"))  # 1,086 x 69
-# cov year09 <- read_csv(paste0(ccceh_data_path, "YEAR09.csv"))  # 476 x 711
-
-# CAARS Self-Report Long Version Score Sheet
-# The Conners' Adult ADHD Rating Scales–Self Report: Long Version (CAARS–S:L) 
-# adult to provide valuable information about themselves.
-# cov: caars <- read_csv(paste0(ccceh_data_path, "CAARS.csv"))  # 628 x 37
-
-# cov? month36 <- read_csv(paste0(ccceh_data_path, "MONTH36.csv"))  # 562 x 779
-# cov? prenatal <- read_csv(paste0(ccceh_data_path, "PRENATAL.csv"))  # 845 x 975
-# cov? specific gravity sgm1 <- read_csv(paste0(ccceh_data_path, "SGM1.csv"))  # 562 x 5
-
-# cov wppsi <- read_csv(paste0(ccceh_data_path, "WPPSI.csv"))  # 543 x 15
-# cov year11 <- read_csv(paste0(ccceh_data_path, "YEAR11.csv"))  #  378 x 748
-# cov maternal food insecurity mfi_mom <- read_csv(paste0(ccceh_data_path, "MFI_MOM.csv"))  # 995 x 29
-# cov month60 <- read_csv(paste0(ccceh_data_path, "MONTH60.csv"))  # 551 x 680
-# cov puberty <- read_csv(paste0(ccceh_data_path, "PUBERTY.csv"))  # 578 x 18
-# cov? specific gravity sgm5 <- read_csv(paste0(ccceh_data_path, "SGM5.csv"))  # 429 x 5
-# cov wasi <- read_csv(paste0(ccceh_data_path, "WASI.csv"))  # 364 x 55
-# cov wppsi_iii <- read_csv(paste0(ccceh_data_path, "WPPSI_III.csv"))  
-# cov year14 <- read_csv(paste0(ccceh_data_path, "YEAR14.csv"))  # 355 x 844
 
 # ADHD 16 / 16-18Y DuPaul Barkley ADHD RATING SCALE IV
 adhd16 <- read_csv(paste0(ccceh_data_path, "ADHD16.csv")) # 248 x 56
@@ -216,14 +171,6 @@ ysr14_clean <-ysr14_scored %>%
 
 # I will start working with problems that are loading in the same direction, and the total 
 ysr14_clean <- ysr14_clean[,c("SID", colnames(ysr14_clean)[which(endsWith(colnames(ysr14_clean), "_Total"))])]
-
-
-# 
-# ysr16_scored_test <- ysr16_scored %>%
-#   mutate(SID_test = as.numeric(str_sub(AssessedPersonId, start = 2, 5))-1000)%>%
-#   mutate(SID_test = ifelse(nchar(as.character(SID_test)) >= 5, SID_test-9000, SID_test))
-
-
 
 ysr14_clean$month <- 168
 ysr14_subset <- ysr14_clean[,c("SID", "month", "Attention_Problems_Total", "Thought_Problems_Total",
