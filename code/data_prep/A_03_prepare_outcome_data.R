@@ -1,4 +1,4 @@
-# create a dataframe containing all the exposures for each subject
+# create a dataframe containing all the outcomes for each subject
 # Jaime Benavides 6/8/22
 # First step to load packages etc.
 rm(list=ls())
