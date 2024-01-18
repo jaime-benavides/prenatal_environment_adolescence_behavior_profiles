@@ -132,7 +132,7 @@ ortho_ebics <- orthos %>% map_dbl(~.$EBIC)
 
 best_fit <- which.min(ortho_ebics)
 
-# oblique model
+# oblique model 
 
 obliq <- factors %>% purrr::map(~fa(pcp_outs$L, nfactors = ., n.obs = n, rotate = "oblimin", scores = "regression"))
 
@@ -152,7 +152,7 @@ data.frame("Factors" = factors, "EBIC" = ortho_ebics) %>% kbl(caption = "Orthogo
   row_spec(best_fit, bold = T, color = "white", background = "#D7261E")
 
 fa_model <- orthos[[best_fit]]
-
+## Table S7
 print(fa_model, digits = 2)
 
 
@@ -189,6 +189,7 @@ colgroups_l$column_names <- c("Demoralization", "Material_Hardship", "Secondhand
 colgroups_l$family <- c("Social_Stressors", "Social_Stressors", "Secondhand_Smoke","Air_Pollution", "PAH-DNA_Adducts", "PAH-DNA_Adducts",
                         "DEHP_Phthalates", "DEHP_Phthalates", "DEHP_Phthalates", "DEHP_Phthalates", "Non-DEHP_Phthalates", "Non-DEHP_Phthalates", "Non-DEHP_Phthalates", "Non-DEHP_Phthalates", "Non-DEHP_Phthalates", "Bisphenol_A")
 fa_pats <- fa_pats %>% dplyr::select(sort(colnames(.))) %>% as.matrix()
+## Figure 3
 p <- 3 # from 1 to 3
 png(paste0(output.folder, pcp_run, "_l_fa_", p, "patterns.png"), 1200, 460)
 print_patterns_loc(fa_pats, colgroups = colgroups_l, pat_type = "factor", n = p, title = "FA factors",
@@ -207,59 +208,6 @@ dev.off()
 
 ### Factor Correlation
 scores %>% dplyr::select(-c(Max)) %>% corr.test() %>% print(short=FALSE)
-
-# ### Visualize Data
-# png(paste0(output.folder, pcp_run, "_l_fa_loadings_1_2_f_grav_corr.png"), 900, 460)
-# loadings %>% 
-#   ggplot(aes(x = MR1, y = MR2, col = colgroups_l$family)) + 
-#   geom_point() + geom_label_repel(aes(label = Variable, col = colgroups_l$family),
-#                                   box.padding   = 0.35,
-#                                   point.padding = 0.5,
-#                                   segment.color = 'grey50') + 
-#   theme(legend.position = "bottom") +
-#   labs(title = "Variable Loadings on First and Second Factors")
-# dev.off()
-# 
-# if ("MR3" %in% colnames(loadings)) {
-#   png(paste0(output.folder, pcp_run, "_l_fa_loadings_1_3_f_grav_corr.png"), 900, 460)
-#   loadings %>% 
-#     ggplot(aes(x = MR1, y = MR3, col = colgroups_l$family)) + 
-#     geom_point() + geom_label_repel(aes(label = Variable, col = colgroups_l$family),
-#                                     box.padding   = 0.35,
-#                                     point.padding = 0.5,
-#                                     segment.color = 'grey50') + 
-#     theme(legend.position = "bottom") +
-#     labs(title = "Variable Loadings on First and Third Factors")
-#   dev.off()
-# }
-# 
-# 
-# plot_loadings <- loadings %>% dplyr::select(-Max) %>% gather(key = "Factor", value = "Loading", -Variable) %>% mutate(Factor = Factor)
-# 
-# png(paste0(output.folder, pcp_run, "_l_fa_var_loadings.png"), 900, 460)
-# plot_loadings %>% 
-#   ggplot(aes(x = Factor, y = Loading, fill = Factor)) + geom_col(position = "dodge") +
-#   facet_wrap(~ Variable) + 
-#   theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1)) +
-#   coord_flip() + geom_hline(yintercept = 0, size = 0.2) +
-#   labs(title = "Variable Loadings on All Factors")
-# dev.off()
-# 
-# png(paste0(output.folder, pcp_run, "_l_fa_scores.png"), 900, 460)
-# scores %>% ggplot(aes(x = Max, fill = Max)) + geom_bar() +
-#   labs(x = "Factors", y = "Number of Individuals", title = "Number with Highest Scores per Factor") +
-#   theme(legend.position = "none")
-# dev.off()
-# 
-# scores %>% dplyr::group_by(Max) %>% dplyr::summarise(n())
-# 
-# png(paste0(output.folder, pcp_run, "_l_fa_scores_dens.png"), 900, 460)
-# scores %>% gather(key = "factor", value = "score", -Max) %>% dplyr::select(-Max) %>% 
-#   ggplot(aes(x = score)) + geom_density() + facet_grid(factor~.) 
-# dev.off()
-
-# not running nmf because l matrix has 6% of values below zero
-
 ## save scores
 
 # assign SID

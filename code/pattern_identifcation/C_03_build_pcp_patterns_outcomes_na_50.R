@@ -271,7 +271,7 @@ dat <- dat[match(order, dat$column_names),]
 # informant <- c("Child", 
 #                "Child", "Child", "Child", "Child", "Child",
 #                )
-
+## Figure S4
 p <- 3
 png(paste0(output.folder, pcp_run, "_l_fa_", p, "patterns_rev2.png"), 1250, 460)
 print_patterns_loc(dat[,c("MR1", "MR2", "MR3")], colgroups = dat[,c("column_names", "family")], pat_type = "factor", n = p, title = "FA factors", size_line = 1.5, size_point = 3,

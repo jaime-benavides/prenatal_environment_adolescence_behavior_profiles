@@ -13,6 +13,8 @@ A_02_prepare_exposure_data.R
 
 A_03_prepare_outcome_data.R
 
+### Data preparation (data_prep) list:
+
 A_04_descriptives_mn_cohort.R
 
 ### Identifying patterns in exposures and behavioral data list:

@@ -6,12 +6,6 @@ project.folder = paste0(print(here::here()),'/')
 source(paste0(project.folder,'0_01_init_directory_structure.R'))
 source(paste0(functions.folder,'script_initiate.R'))
 
-# library(broom)
-# library(ggfortify)
-# library(ggrepel)
-# library(kableExtra)
-# library(NMF)
-
 data_path <- "/home/jbenavides/maklab/scratch/data/health/amy_r01_aim1/raw_data/"
 ccceh_data_path <- paste0(data_path, "CCCEH_Data/")
 
@@ -45,7 +39,6 @@ prenatal$ethnicity[prenatal$ethnicity == "4"] <- "0" # other hispanic
 
 prenatal$ethnicity[prenatal$ethnicity == "5"] <- "1" # african american
 prenatal$ethnicity <- as.numeric(prenatal$ethnicity)
-# prenatal$ethnicity <- factor(prenatal$ethnicity)
 
 # WASI_PRI_C Perceptual Reasoning Composite Score / WASI_VCI_C Verbal Comprehension Composite Score
 gender <- read_csv(paste0(ccceh_data_path, "GENDER.csv")) 
@@ -62,15 +55,12 @@ wisc <- wisc[which(wisc$MONTHS==84),] # 523 subjects
 # "WSC_DS" Digit Span scaled score the more the better
 # WSC_COD "Coding scaled score the more the better
 wisc <- wisc[,c("SID", "WSC_DS", "WSC_COD")]
-# wasi <- read_csv(paste0(ccceh_data_path, "WASI.csv"))  # 364 x 55 (Wechsler Abbreviated Scale of Intelligence)
-# wasi <- wasi[,c("CEHID", "WASI_FSIQ4_C")]
-# WASI_FSIQ4_C "Full Scale-4 IQ Composite Score" the more the better
 home <- read_csv(paste0(ccceh_data_path, "HOME.csv"))  # 545 x 19 CEH: Early Childhood Home Inventory
 #HOMETOT HOMETOT "Total Score" the more the better
 home <- home[,c("SID", "HOMETOT")]
 # puberty <- read_csv(paste0(ccceh_data_path, "PUBERTY.csv"))  # 578 x 18
-# create a dataframe that includes all the combinations of SID contained in the above datasets
 
+# create a dataframe that includes all the combinations of SID contained in the above datasets
 
 sids <- unique(c(home$SID, wisc$SID, wasi$SID, prenatal$SID, bchart$SID, caars$SID, gender$SID, toni$SID))
 sids <- sids[order(sids)]
@@ -105,7 +95,11 @@ colnames(exposure_profiles_match) <- c("SID", "exposure_prof_2", "exposure_prof_
 exposure_profiles_match <- exposure_profiles_match[,c("SID", "exposure_prof_1", "exposure_prof_2", "exposure_prof_3")]
 colnames(outcome_profiles_match) <- c("SID", "outcome_prof_3", "outcome_prof_1", "outcome_prof_2")
 outcome_profiles_match <- outcome_profiles_match[,c("SID", "outcome_prof_1", "outcome_prof_2", "outcome_prof_3")]
+
 profiles <- dplyr::left_join(exposure_profiles_match, outcome_profiles_match, by = "SID")
+## Figure 1 overlapping sample
+nrow(profiles)
+# 192
 data <- dplyr::left_join(profiles, covariates, by = "SID")
 
 nas_perc <- (colMeans(is.na(data)))*100
@@ -147,6 +141,7 @@ mice::densityplot(df_imput)
 
 mice::stripplot(df_imput, pch = c(21, 20), cex = c(1, 1.5))
 
+# Table S9
 
 mod_outc_1_expo_1 <- lm(outcome_prof_1 ~ exposure_prof_1 + GENDER + age + mat_ed_lvl + WSC_DS + WSC_COD + WASI_PRI_C + WASI_VCI_C + HOMETOT + B11 + TSC_H + ethnicity + T3QT, 
                         data = data, 
@@ -228,6 +223,7 @@ dev.off()
 png(paste0(output.folder, "models_result", "_sens_anal_med_imputed_outc_2_expo_3_rev_shs_rev_valid_part_rev_scs_more_conf.png"), 900, 460)
 compare_model_imput(mod_outc_2_expo_3, mod_outc_2_expo_3_imp)
 dev.off()
+## Figure S2
 png(paste0(output.folder, "models_result", "_sens_anal_med_imputed_outc_3_expo_1_rev_shs_rev_valid_part_rev_scs_more_conf.png"), 900, 460)
 compare_model_imput(mod_outc_3_expo_1, mod_outc_3_expo_1_imp)
 dev.off()
@@ -272,6 +268,7 @@ grid.table(model_res, rows = NULL)
 dev.off()
 model_res$exposure_profile <- rep(c("exposure_profile_1", "exposure_profile_2", "exposure_profile_3"),3)
 # plot all model results together
+## Figure 5
 png(paste0(output.folder, "models_result", "_main_analysis_new.png"), 900, 460)
 model_res %>%
 dplyr::mutate(estimate = Beta.fit, std.error = Beta.se) %>%

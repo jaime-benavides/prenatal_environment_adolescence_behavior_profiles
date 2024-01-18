@@ -66,7 +66,7 @@ covariates <- covariates %>%
   dplyr::left_join(caars, by = c("SID")) %>%
   dplyr::left_join(toni, by = c("SID"))
 
-
+## Table 1 and ## Table S2
 data <- dplyr::left_join(exposures_pren, covariates, by = "SID")
 summary(data)
 
@@ -167,6 +167,7 @@ outc_prep <- readRDS(paste0(generated.data.folder, "data_with_ids_outc_",mon/12,
 
 
 data <- dplyr::left_join(outc_prep, covariates, by = "SID")
+## Table S5 and ## Table S6
 summary(data)
 
 

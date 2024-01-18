@@ -89,7 +89,7 @@ expo_per_raw <- expo_per_raw[,-c(as.numeric(which((colSums(is.na(expo_per_raw))/
 # apply criteria of missing data per row and column
 tot_subj <- nrow(expo_per_raw)
 
-# todo: add next steps that led to generate summary variables for both demoralization and material hardship to exposure data preparation
+
 expo_per_raw$demoralization <- rowSums(expo_per_raw[,c(paste0("L", sprintf('%0.2d', 1:27)))], na.rm = T)
 expo_per_raw$material_hardship <- rowSums(expo_per_raw[,c(paste0("A", 10:17))], na.rm = T)
 
@@ -109,7 +109,7 @@ exposure_description <- exposure_description[-which(grepl('^A', exposure_descrip
 sid_smokers <- expo_per_raw[which(expo_per_raw$E01 == 1), "SID"] # 14 participants have reported to be active smokers and + 27 have cotinine levels higher than 1 
 # delete unused tobacco smoke variables
 expo_per_raw <- expo_per_raw[,-c(4,5)]
-# plot nas 
+# plot nas (used to inform ##Figure 1)
 nas_perc <- (colMeans(is.na(expo_per_raw)))*100
 nas_perc <- nas_perc[-c(1,2)]
 x <- nas_perc
@@ -122,9 +122,8 @@ dev.off()
 x.max <- max(x, na.rm = T)
 if(x.max > 100) x.max <- 100
 if(x.max < 0) x.max <- 1
-# var_names <- names(nas_perc)[-c(1,2)]
 
-# dt <- data.frame(var_names = var_names, nas_perc = nas_perc)
+
 png(paste0(output.folder, "prenatal_exposure_missinges_reduced_grav_corr_rev_shs_rev_valid_part.png"), 900, 460)
 plot <- ggplot2::ggplot(data.frame(x),
                         ggplot2::aes(seq_along(x), x, fill = x)) +
@@ -175,7 +174,7 @@ pdf(paste0(output.folder, "prenatal_exposure_na_res_data_matrix_n_438_rev_grav_c
 grid.table(x)
 dev.off()
 
-# todo: extend scaling approach to all analysis
+
 expo_desc_loc <- exposure_description[
   which(exposure_description$month == unique(expo_per$month) & # todo: generalize to sid and month any order
           exposure_description$exposure %in% colnames(expo_per[,-which(colnames(expo_per) %in% c("SID", "month"))])),]
@@ -201,7 +200,7 @@ expo_per <- expo_per[ , -c(which(colnames(expo_per)=="id"))]
 pdf(paste0(output.folder, "prenatal_exposure_description_reduced_na_tol", na_tol, "_rev_grav_corr_rev_shs_rev_valid_part.pdf"), height=15, width=20)
 grid.table(expo_desc_loc[,-3])
 dev.off()
-
+## Table S3
 # build matrix LODs (from MN codebook)
 # lod matrix values are zero for missing lod and higher than zero for reported lod
 lods_names <- c("madducts", "MEHHP","MECPP","MEOHP","MEHP","MCPP","MIBP","MBP","MBZP","MEP",

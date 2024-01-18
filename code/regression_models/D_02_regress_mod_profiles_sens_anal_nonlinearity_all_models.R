@@ -5,12 +5,6 @@ project.folder = paste0(print(here::here()),'/')
 source(paste0(project.folder,'0_01_init_directory_structure.R'))
 source(paste0(functions.folder,'script_initiate.R'))
 
-# library(broom)
-# library(ggfortify)
-# library(ggrepel)
-# library(kableExtra)
-# library(NMF)
-
 data_path <- "/home/jbenavides/maklab/scratch/data/health/amy_r01_aim1/raw_data/"
 ccceh_data_path <- paste0(data_path, "CCCEH_Data/")
 
@@ -49,13 +43,10 @@ wisc <- wisc[which(wisc$MONTHS==84),] # 523 subjects
 # "WSC_DS" Digit Span scaled score the more the better
 # WSC_COD "Coding scaled score the more the better
 wisc <- wisc[,c("SID", "WSC_DS", "WSC_COD")]
-# wasi <- read_csv(paste0(ccceh_data_path, "WASI.csv"))  # 364 x 55 (Wechsler Abbreviated Scale of Intelligence)
-# wasi <- wasi[,c("CEHID", "WASI_FSIQ4_C")]
-# WASI_FSIQ4_C "Full Scale-4 IQ Composite Score" the more the better
 home <- read_csv(paste0(ccceh_data_path, "HOME.csv"))  # 545 x 19 CEH: Early Childhood Home Inventory
 #HOMETOT HOMETOT "Total Score" the more the better
 home <- home[,c("SID", "HOMETOT")]
-# puberty <- read_csv(paste0(ccceh_data_path, "PUBERTY.csv"))  # 578 x 18
+
 # create a dataframe that includes all the combinations of SID contained in the above datasets
 
 prenatal$ethnicity <- as.character(prenatal$ethnicity)
@@ -149,6 +140,8 @@ mynamestheme <- theme(
   axis.title = element_text(family = "Helvetica", size = (30)),
   axis.text = element_text(family = "Helvetica", size = (30))
 )
+
+## Figure S1
 
 # configure plots
 # general config
@@ -363,48 +356,3 @@ p<- gratia::draw(mod,
   mynamestheme
 p
 dev.off()
-
-# 
-# 
-# mods <- c("mod_outc_1_expo_1", "mod_outc_1_expo_2", "mod_outc_1_expo_3", 
-#           "mod_outc_2_expo_1", "mod_outc_2_expo_2", "mod_outc_2_expo_3",
-#           "mod_outc_3_expo_1", "mod_outc_3_expo_2", "mod_outc_3_expo_3")
-# Beta.fit <- numeric()
-# Beta.se <- numeric()
-# Beta.lci <- numeric()
-# Beta.uci <- numeric()
-# for(mds in 1:length(mods)){
-# m <- get(mods[mds])
-# Beta.fit[mds] <- summary(m)$coefficients[2,1]
-# Beta.se[mds]  <- summary(m)$coefficients[2,2]
-# Beta.lci[mds] <- Beta.fit[mds] - 1.96 * Beta.se[mds]
-# Beta.uci[mds] <- Beta.fit[mds] + 1.96 * Beta.se[mds]
-# }
-# model_res <- data.frame(model_name = mods, Beta.fit = Beta.fit, Beta.se = Beta.se, Beta.lci = Beta.lci, Beta.uci = Beta.uci)
-# model_res[,2:5] <- round(model_res[,2:5], 2)
-# pdf(paste0(output.folder, "model_summary_table_rev1_sens_anal_mediators.pdf"), height=4, width=6)
-# grid.table(model_res, rows = NULL)
-# dev.off()
-# model_res$exposure_profile <- rep(c("exposure_profile_1", "exposure_profile_2", "exposure_profile_3"),3)
-# # plot all model results together
-# png(paste0(output.folder, "models_result", "_rev1_sens_anal_mediators.png"), 900, 460)
-# model_res %>%
-# dplyr::mutate(estimate = Beta.fit, std.error = Beta.se) %>%
-#   dplyr::mutate(model_name = fct_relevel(model_name, 
-#                                    rev(c("mod_outc_1_expo_1", "mod_outc_1_expo_2", "mod_outc_1_expo_3",
-#                                      "mod_outc_2_expo_1", "mod_outc_2_expo_2", "mod_outc_2_expo_3",
-#                                      "mod_outc_3_expo_1", "mod_outc_3_expo_2", "mod_outc_3_expo_3")))) %>%
-#   ggplot(aes(x = model_name, y = estimate, color = exposure_profile, shape=exposure_profile,
-#              ymin = estimate - 1.96*std.error,
-#              ymax = estimate + 1.96*std.error)) +
-#   geom_pointrange(size = 1.25) + theme_bw() +
-#   scale_shape_manual(values=c(1, 2, 5))+
-#   scale_color_manual(values=c('#bf43bd','#4398bf', '#251963'))+
-#   ylim(-0.3,0.4) + 
-#   geom_hline(yintercept = 0, color = "black", linetype = "dashed") +
-#   theme(legend.text = element_text(size=12), legend.title = element_text(size=14),
-#         axis.text.y = element_text(hjust = 1, size = 14),
-#               axis.text.x = element_text(size = 14), strip.background = element_rect(fill = "white"), 
-#               axis.title.x = element_blank(), axis.title.y = element_blank()) + coord_flip() +
-#   labs(y = "Estimate", x = "Model")
-# dev.off()

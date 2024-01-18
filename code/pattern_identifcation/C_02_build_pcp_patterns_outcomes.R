@@ -194,7 +194,7 @@ data.frame("Factors" = factors, "EBIC" = ortho_ebics) %>% kbl(caption = "Orthogo
   row_spec(best_fit, bold = T, color = "white", background = "#D7261E")
 
 fa_model <- orthos[[best_fit]]
-
+## Table S8
 print(fa_model, digits = 2)
 
 # check correlation from oblique model
@@ -255,6 +255,7 @@ new_column_names <- c("ADHDCTOT", "ADHDCIA", "ADHDCHI", "ADHDWTOT", "ADHDWIA", "
                                "Other_drugs", "Joints", "Cigarettes", "Drinks",
                                "KS_Tobacco", "KS_Alcohol", "KS_Substance", "KS_Psychosis", "KS_Inattentive", "KS_hyperact_impulsive")
 dat$column_names <- new_column_names
+## Figure 4
 p <- 2
 png(paste0(output.folder, pcp_run, "_l_fa_", p, "patterns_rev_scs_renames.png"), 1250, 460)
 print_patterns_loc(dat[,c("MR1", "MR2", "MR3")], colgroups = dat[,c("column_names", "family")], pat_type = "factor", n = p, title = "FA factors", 

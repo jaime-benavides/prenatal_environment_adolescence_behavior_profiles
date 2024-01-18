@@ -5,12 +5,6 @@ project.folder = paste0(print(here::here()),'/')
 source(paste0(project.folder,'0_01_init_directory_structure.R'))
 source(paste0(functions.folder,'script_initiate.R'))
 
-# library(broom)
-# library(ggfortify)
-# library(ggrepel)
-# library(kableExtra)
-# library(NMF)
-
 data_path <- "/home/jbenavides/maklab/scratch/data/health/amy_r01_aim1/raw_data/"
 ccceh_data_path <- paste0(data_path, "CCCEH_Data/")
 
@@ -44,7 +38,6 @@ prenatal$ethnicity[prenatal$ethnicity == "4"] <- "0" # other hispanic
 
 prenatal$ethnicity[prenatal$ethnicity == "5"] <- "1" # african american
 prenatal$ethnicity <- as.numeric(prenatal$ethnicity)
-# prenatal$ethnicity <- factor(prenatal$ethnicity)
 
 # WASI_PRI_C Perceptual Reasoning Composite Score / WASI_VCI_C Verbal Comprehension Composite Score
 gender <- read_csv(paste0(ccceh_data_path, "GENDER.csv")) 
@@ -53,21 +46,17 @@ wisc <- read_csv(paste0(ccceh_data_path, "WISC.csv"))  # 1,086 x 69 16-18Y: Wech
 dt <- wisc %>%
   dplyr::group_by(MONTHS) %>%
   dplyr::summarise(n = n())
-# pdf(paste0(output.folder, "wisc_age_n.pdf"), height=4, width=6)
-# grid.table(dt, rows = NULL)
-# dev.off()
+
 wisc <- wisc[which(wisc$MONTHS==84),] # 523 subjects
 # WSC_BYR "Birth Year"
 # "WSC_DS" Digit Span scaled score the more the better
 # WSC_COD "Coding scaled score the more the better
 wisc <- wisc[,c("SID", "WSC_DS", "WSC_COD")]
-# wasi <- read_csv(paste0(ccceh_data_path, "WASI.csv"))  # 364 x 55 (Wechsler Abbreviated Scale of Intelligence)
-# wasi <- wasi[,c("CEHID", "WASI_FSIQ4_C")]
-# WASI_FSIQ4_C "Full Scale-4 IQ Composite Score" the more the better
+
 home <- read_csv(paste0(ccceh_data_path, "HOME.csv"))  # 545 x 19 CEH: Early Childhood Home Inventory
 #HOMETOT HOMETOT "Total Score" the more the better
 home <- home[,c("SID", "HOMETOT")]
-# puberty <- read_csv(paste0(ccceh_data_path, "PUBERTY.csv"))  # 578 x 18
+
 # create a dataframe that includes all the combinations of SID contained in the above datasets
 
 
@@ -113,9 +102,6 @@ x <- nas_perc
 x <- x[order(x, decreasing = TRUE)]
 miss <- as.data.frame(x )
 colnames(miss) <- "percent_miss"
-# pdf(paste0(output.folder, "missing_data_covariates_sens_anal_med_rev_valid_part_rev_scs_more_conf.pdf"), height=11, width=8.5)
-# gridExtra::grid.table(miss)
-# dev.off()
 
 # standardize
 # leave out gender, which is categorical
@@ -260,6 +246,7 @@ for(mds in 1:length(mods)){
   Beta.lci[mds] <- Beta.fit[mds] - 1.96 * Beta.se[mds]
   Beta.uci[mds] <- Beta.fit[mds] + 1.96 * Beta.se[mds]
 }
+# Figure S6
 model_res <- data.frame(model_name = mods, Beta.fit = Beta.fit, Beta.se = Beta.se, Beta.lci = Beta.lci, Beta.uci = Beta.uci)
 model_res[,2:5] <- round(model_res[,2:5], 2)
 pdf(paste0(output.folder, "model_summary_table_sens_anal_red_counf.pdf"), height=4, width=6)
