@@ -136,53 +136,6 @@ els_time_points <- qdapRegex::ex_between(ls(pattern = "els"), "_", "_")
 els_time_points <- as.character(els_time_points)
 els_items <- gsub("_12", "", els_12_vars)
 
-# intimate partner violence (IPV) - 12 questions
-codebook[which(grepl("X12", codebook$variable_name, fixed=TRUE)),]
-ipv_60_vars <- c("X01_60", "X02_60", "X03_60", "X04_60", "X05_60", "X06_60", "X07_60", "X08_60", "X09_60", "X10_60" , "X11_60" , "X12_60")
-ipv_84_vars <- c("X01_84", "X02_84", "X03_84", "X04_84", "X05_84", "X06_84", "X07_84", "X08_84", "X09_84", "X10_84" , "X11_84" , "X12_84")
-ipv_Y9_vars <- c("X01_Y9", "X02_Y9", "X03_Y9", "X04_Y9", "X05_Y9", "X06_Y9", "X07_Y9", "X08_Y9", "X09_Y9", "X10_Y9" , "X11_Y9" , "X12_Y9")
-ipv_Y11_vars <- c("X01_Y11", "X02_Y11", "X03_Y11", "X04_Y11", "X05_Y11", "X06_Y11", "X07_Y11", "X08_Y11", "X09_Y11", "X10_Y11" , "X11_Y11" , "X12_Y11")
-ipv_Y11_vars <- c("X01_Y11", "X02_Y11", "X03_Y11", "X04_Y11", "X05_Y11", "X06_Y11", "X07_Y11", "X08_Y11", "X09_Y11", "X10_Y11" , "X11_Y11" , "X12_Y11")
-ipv_time_points <- qdapRegex::ex_between(ls(pattern = "ipv"), "_", "_")
-ipv_time_points <- as.character(ipv_time_points)
-ipv_items <- gsub("_60", "", ipv_60_vars)
-
-# social support (8 questions)
-codebook[which(grepl("Y05Y11", codebook$variable_name, fixed=TRUE)),]
-ss_60_vars <- c("Y01_60" , "Y03_60" , "Y05_60" , "Y06A_60" , "Y06B_60" , "Y06C_60" , "Y06D_60" , "Y06E_60")
-ss_84_vars <- c("Y01_84" , "Y03_84" , "Y05_84" , "Y06A_84" , "Y06B_84" , "Y06C_84" , "Y06D_84" , "Y06E_84")
-ss_Y9_vars <- c("Y01_Y9" , "Y03_Y9" , "Y05_Y9" , "Y06A_Y9" , "Y06B_Y9" , "Y06C_Y9" , "Y06D_Y9" , "Y06E_Y9")
-ss_Y11_vars <- c("Y01Y11" , "Y03Y11" , "Y05Y11" , "Y06AY11" , "Y06BY11" , "Y06CY11" , "Y06DY11" , "Y06EY11")
-ss_Y14_vars <- c("Y01Y11" , "Y03Y11" , "Y05Y11" , "Y06AY11" , "Y06BY11" , "Y06CY11" , "Y06DY11" , "Y06EY11")
-ss_time_points <- qdapRegex::ex_between(ls(pattern = "ss"), "_", "_")
-ss_time_points <- as.character(ss_time_points)
-ss_items <- gsub("_60", "", ss_60_vars)
-
-# neighborhood quality (32 questions)
-codebook[which(grepl("U02A", codebook$variable_name, fixed=TRUE)),]
-nq_60_vars <- c("U02A_60", "U02B_60", "U02C_60", "U02D_60", "U02E_60", "U02F_60", "U02G_60", "U02H_60", "U02I_60", "U02J_60", "U02K_60", "U02L_60", "U03_1_60",
-"U03_2_60", "U03_3_60", "U03_4_60", "U03_5_60", "U03_6_60", "U0401_60", "U0402_60", "U0403_60", "U0404_60", "U0405_60", "U0405A60",
-"U0406_60", "U0407_60", "U0408_60", "U0409_60", "U0410_60" , "U0411_60" , "U0412_60" , "U0413_60")
-
-nq_84_vars <- c("U02A_84", "U02B_84", "U02C_84", "U02D_84", "U02E_84", "U02F_84", "U02G_84", "U02H_84", "U02I_84", "U02J_84", "U02K_84", "U02L_84", "U03_1_84",
-                "U03_2_84", "U03_3_84", "U03_4_84", "U03_5_84", "U03_6_84", "U0401_84", "U0402_84", "U0403_84", "U0404_84", "U0405_84", "U0405A84",
-                "U0406_84", "U0407_84", "U0408_84", "U0409_84", "U0410_84" , "U0411_84" , "U0412_84" , "U0413_84")
-
-nq_Y9_vars <- c("U02A_Y9", "U02B_Y9", "U02C_Y9", "U02D_Y9", "U02E_Y9", "U02F_Y9", "U02G_Y9", "U02H_Y9", "U02I_Y9", "U02J_Y9", "U02K_Y9", "U02L_Y9", "U03_1_Y9",
-                "U03_2_Y9", "U03_3_Y9", "U03_4_Y9", "U03_5_Y9", "U03_6_Y9", "U0401_Y9", "U0402_Y9", "U0403_Y9", "U0404_Y9", "U0405_Y9", "U0405AY9",
-                "U0406_Y9", "U0407_Y9", "U0408_Y9", "U0409_Y9", "U0410_Y9" , "U0411_Y9" , "U0412_Y9" , "U0413_Y9")
-
-nq_Y11_vars <- c("U02AY11", "U02BY11", "U02CY11", "U02DY11", "U02EY11", "U02FY11", "U02GY11", "U02HY11", "U02IY11", "U02JY11", "U02KY11", "U02LY11", "U03_1Y11",
-                "U03_2Y11", "U03_3Y11", "U03_4Y11", "U03_5Y11", "U03_6Y11", "U0401Y11", "U0402Y11", "U0403Y11", "U0404Y11",  "U0405Y11", "U0405AY11",
-                "U0406Y11", "U0407Y11", "U0408Y11", "U0409Y11", "U0410Y11" , "U0411Y11" , "U0412Y11" , "U0413Y11")
-
-nq_Y14_vars <- c("U02AY11", "U02BY11", "U02CY11", "U02DY11", "U02EY11", "U02FY11", "U02GY11", "U02HY11", "U02IY11", "U02JY11", "U02KY11", "U02LY11", "U03_1Y11",
-                "U03_2Y11", "U03_3Y11", "U03_4Y11", "U03_5Y11", "U03_6Y11", "U0401Y11", "U0402Y11", "U0403Y11", "U0404Y11", "U0405Y11", "U0405AY11",
-                "U0406Y11", "U0407Y11", "U0408Y11", "U0409Y11", "U0410Y11" , "U0411Y11" , "U0412Y11" , "U0413Y11")
-
-nq_time_points <- qdapRegex::ex_between(ls(pattern = "nq"), "_", "_")
-nq_time_points <- as.character(nq_time_points)
-nq_items <- gsub("60","", gsub("_60", "", nq_60_vars)) 
 
 # maternal distress or demoralization (27 questions)
 codebook[which(grepl("L01", codebook$variable_name, fixed=TRUE)),]
