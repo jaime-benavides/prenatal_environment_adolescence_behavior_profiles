@@ -7,20 +7,20 @@ data_path <- "/home/jbenavides/maklab/scratch/data/health/amy_r01_aim1/raw_data/
 ccceh_data_path <- paste0(data_path, "CCCEH_Data/")
 
 # read covariates 
-covariates <- readRDS(paste0(generated.data.folder, "covariates.rds"))
+covariates <- readRDS(paste0(generated.data.folder, "covariates.rds")) # GC: generated.data.folder was not defined previously.
 # check age range of initial subset of cohort with administered interviews and surveys
 sids_visit_16 <- readRDS(paste0(generated.data.folder, "sids_any_neurobehavioral_data.rds"))
 
-summary(covariates[which(covariates$SID %in% sids_visit_16), "age"])
+summary(covariates[which(covariates$SID %in% sids_visit_16), "age"])   # GC: maybe a brief description of the SID variable will be helpful.
 ## read profiles
 # exposure
-case_expo <- "na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part"
+case_expo <- "na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part" # GC: case_expo is defined here, but not used in the next line.
 exposure_profiles <- readRDS(paste0(generated.data.folder, "exposure_pcp_fa_profiles_scores_na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part_n_438.rds"))
 # outcome
 case_outc <- "16_yrs_na_75"
 outcome_profiles <- readRDS(paste0(generated.data.folder, "outcome_pcp_fa_profiles_scores_", case_outc, "_n_322_rev_scs.rds"))
-sid_match <- outcome_profiles$SID[which(outcome_profiles$SID  %in% exposure_profiles$SID)]
-
+sid_match <- outcome_profiles$SID[which(outcome_profiles$SID  %in% exposure_profiles$SID)] # GC: it will be informative to add a brief title indicating what is the meaning of the code in lines 22-29. 
+ 
 outcome_profiles_match <- outcome_profiles[which(outcome_profiles$SID %in% sid_match),]
 exposure_profiles_match <- exposure_profiles[which(exposure_profiles$SID %in% sid_match),]
 colnames(exposure_profiles_match) <- c("SID", "exposure_prof_2", "exposure_prof_3", "exposure_prof_1")
@@ -35,7 +35,7 @@ nrow(profiles)
 data <- dplyr::left_join(profiles, covariates, by = "SID")
 
 # standardize
-# leave out gender, which is categorical
+# leave out gender, which is categorical 
 my.min <- unlist(lapply(data,function(x) min(x,na.rm=T))) 
 my.max <- unlist(lapply(data,function(x) max(x,na.rm=T))) 
 non_scale <- which(my.max - my.min == 1)
@@ -46,7 +46,7 @@ data_imput <- data[,-1]
 predMat <- mice::make.predictorMatrix(data_imput)
 
 outcome_vars <- colnames(profiles)[-1]
-predMat[,outcome_vars] <- 0
+predMat[,outcome_vars] <- 0 # GC: I am not sure I understand why zero is assigned here. Does it mean that all variables in the profile dataset (except for the first one) are not used as predictors in the imputation?
 
 ## CREATING A METHODS VECTOR FOR IMPUTATIOM
 impmethod <- mice::make.method(data_imput)
@@ -64,7 +64,7 @@ mice::densityplot(df_imput)
 
 mice::stripplot(df_imput, pch = c(21, 20), cex = c(1, 1.5))
 
-# Table S9
+# Table S9 # GC: before making the code public, please consider organizing scripts of tables and figures by order of appearance in the manuscript.
 
 mod_outc_1_expo_1 <- lm(outcome_prof_1 ~ exposure_prof_1 + GENDER + age + mat_ed_lvl + WSC_DS + WSC_COD + WASI_PRI_C + WASI_VCI_C + HOMETOT + B11 + TSC_H + ethnicity + T3QT, 
                         data = data, 
@@ -191,12 +191,12 @@ model_res$exposure_profile <- rep(c("exposure_profile_1", "exposure_profile_2", 
 # plot all model results together
 ## Figure 5
 png(paste0(output.folder, "models_result", "_main_analysis_new.png"), 900, 460)
-model_res %>%
+model_res %>% 
 dplyr::mutate(estimate = Beta.fit, std.error = Beta.se) %>%
   dplyr::mutate(model_name = fct_relevel(model_name, 
                                    rev(c("mod_outc_1_expo_1", "mod_outc_1_expo_2", "mod_outc_1_expo_3",
                                      "mod_outc_2_expo_1", "mod_outc_2_expo_2", "mod_outc_2_expo_3",
-                                     "mod_outc_3_expo_1", "mod_outc_3_expo_2", "mod_outc_3_expo_3")))) %>%
+                                     "mod_outc_3_expo_1", "mod_outc_3_expo_2", "mod_outc_3_expo_3")))) %>% # GC: you may use 'mods' (defined in lines 167-169) instead of this long vector.
   ggplot(aes(x = model_name, y = estimate, color = exposure_profile, shape=exposure_profile,
              ymin = estimate - 1.96*std.error,
              ymax = estimate + 1.96*std.error)) +
