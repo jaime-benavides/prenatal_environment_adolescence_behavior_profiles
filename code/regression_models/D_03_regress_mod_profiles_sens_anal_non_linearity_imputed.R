@@ -11,7 +11,7 @@ covariates <- readRDS(paste0(generated.data.folder, "covariates.rds"))
 
 ## read profiles
 # exposure
-case_expo <- "na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part"
+case_expo <- "na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part" # GC: seems to be a redundant line.
 exposure_profiles <- readRDS(paste0(generated.data.folder, "exposure_pcp_fa_profiles_scores_na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part_n_438.rds"))
 # outcome
 case_outc <- "16_yrs_na_75"
@@ -24,7 +24,7 @@ exposure_profiles_match <- exposure_profiles[which(exposure_profiles$SID %in% si
 
 colnames(exposure_profiles_match) <- c("SID", "exposure_prof_2", "exposure_prof_3", "exposure_prof_1")
 exposure_profiles_match <- exposure_profiles_match[,c("SID", "exposure_prof_1", "exposure_prof_2", "exposure_prof_3")]
-colnames(outcome_profiles_match) <- c("SID", "outcome_prof_3", "outcome_prof_1", "outcome_prof_2")
+colnames(outcome_profiles_match) <- c("SID", "outcome_prof_3", "outcome_prof_1", "outcome_prof_2") # GC: numbers in variables' names suffix are not in order (3-1-2) while in the next line there are (I'm not sure it has any meaning, but putting it here just in case...).
 outcome_profiles_match <- outcome_profiles_match[,c("SID", "outcome_prof_1", "outcome_prof_2", "outcome_prof_3")]
 profiles <- dplyr::left_join(exposure_profiles_match, outcome_profiles_match, by = "SID")
 data <- dplyr::left_join(profiles, covariates, by = "SID")
