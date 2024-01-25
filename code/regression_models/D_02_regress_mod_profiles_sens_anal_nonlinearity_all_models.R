@@ -13,7 +13,7 @@ covariates <- readRDS(paste0(generated.data.folder, "covariates.rds"))
 # exposure
 exposure_profiles <- readRDS(paste0(generated.data.folder, "exposure_pcp_fa_profiles_scores_na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part_n_438.rds"))
 # outcome
-case_outc <- "16_yrs_na_75"
+case_outc <- "16_yrs_na_75" # GC: redundant line (this is the only appearance of the object ‘case_outc’ in this script).
 outcome_profiles <- readRDS(paste0(generated.data.folder, "outcome_pcp_fa_profiles_scores_16_yrs_na_75_n_322_rev_scs.rds"))
 
 sid_match <- outcome_profiles$SID[which(outcome_profiles$SID  %in% exposure_profiles$SID)]
@@ -32,8 +32,7 @@ data <- dplyr::left_join(profiles, covariates, by = "SID")
 my.min <- unlist(lapply(data,function(x) min(x,na.rm=T))) 
 my.max <- unlist(lapply(data,function(x) max(x,na.rm=T))) 
 non_scale <- which(my.max - my.min == 1)
-data[,-c(which(colnames(data) %in% c("SID")),non_scale)] = apply(data[,-c(which(colnames(data) %in% c("SID")),non_scale)], 2, function(a) a/sd(a, na.rm = T))
-
+data[,-c(which(colnames(data) %in% c("SID")),non_scale)] = apply(data[,-c(which(colnames(data) %in% c("SID")),non_scale)], 2, function(a) a/sd(a, na.rm = T)) # GC: if you like it more concise you may use: =="SID" instead of %in% c("SID")
 mod_outc_1_expo_1 <- gam(outcome_prof_1 ~ s(exposure_prof_1)+ GENDER + age + mat_ed_lvl + WSC_DS + WSC_COD + WASI_PRI_C + WASI_VCI_C + HOMETOT + B11 + TSC_H + ethnicity + T3QT, 
           data = data, 
           na.action = na.omit)
@@ -103,7 +102,7 @@ dev.off()
 
 sm <- "s(exposure_prof_2)"
 x_name <- "Exposure Profile 2"
-y_name <- "Behavior Profile 1"
+y_name <- "Behavior Profile 1" 
 
 name_plot <- ""
 mod <- mod_outc_1_expo_2
@@ -125,7 +124,7 @@ dev.off()
 
 sm <- "s(exposure_prof_3)"
 x_name <- "Exposure Profile 3"
-y_name <- "Behavior Profile 1"
+y_name <- "Behavior Profile 1"  
 
 name_plot <- ""
 mod <- mod_outc_1_expo_3
@@ -169,7 +168,7 @@ dev.off()
 
 sm <- "s(exposure_prof_2)"
 x_name <- "Exposure Profile 2"
-y_name <- "Behavior Profile 2"
+y_name <- "Behavior Profile 2"   
 
 name_plot <- ""
 mod <- mod_outc_2_expo_2
@@ -191,7 +190,7 @@ dev.off()
 
 sm <- "s(exposure_prof_3)"
 x_name <- "Exposure Profile 3"
-y_name <- "Behavior Profile 2"
+y_name <- "Behavior Profile 2"  
 
 name_plot <- ""
 mod <- mod_outc_2_expo_3
@@ -236,7 +235,7 @@ dev.off()
 
 sm <- "s(exposure_prof_2)"
 x_name <- "Exposure Profile 2"
-y_name <- "Behavior Profile 3"
+y_name <- "Behavior Profile 3"   
 
 name_plot <- ""
 mod <- mod_outc_3_expo_2
@@ -258,7 +257,7 @@ dev.off()
 
 sm <- "s(exposure_prof_3)"
 x_name <- "Exposure Profile 3"
-y_name <- "Behavior Profile 3"
+y_name <- "Behavior Profile 3" 
 
 name_plot <- ""
 mod <- mod_outc_3_expo_3
@@ -276,3 +275,43 @@ p<- gratia::draw(mod,
   mynamestheme
 p
 dev.off()
+# GC: duplicate lines in 105+127 ('y_name' is defined earlier in line 84), 171+193 ('y_name' is defined earlier in line 149), 238+260 ('y_name' is defined eralier in line 216).
+# GC: I suggest putting lines 78-277 in a nested loop for a more readable and concise code. Below is the suggested code (I checked what I could without the data and it seems to be working).
+# Please pay attention that the code is not marked as a comment (#) for an easy copy & run.
+                                                                 
+## Figure S1
+
+# Configure plots
+exposures <- c("exposure_prof_1", "exposure_prof_2", "exposure_prof_3")
+behaviors <- c("behav_prof_1", "behav_prof_2", "behav_prof_3")
+
+for (expo in exposures) {
+  for (behav in behaviors) {
+    # general config
+    sm <- paste0("s(", expo, ")")
+    No.expo <- substr(expo, nchar(expo), nchar(expo))
+    No.behav <- substr(behav, nchar(behav), nchar(behav))
+    x_name <- paste0("Exposure Profile ", No.expo)
+    y_name <- paste0("Behavior Profile ", No.behav)
+    
+    name_plot <- ""
+    mod_name <- paste0("mod_outc_",No.behav,"_expo_",No.expo)
+    mod <- get(mod_name)
+    ci_col <- "blue"
+    plot_file <- paste0("nonline_sens_anal_med_mod_outc_",No.behav,"_expo_",No.expo,"_rev_2.png")
+    png(paste0(output.folder, plot_file), 900, 460)
+    p <- gratia::draw(mod,
+                      select = sm,
+                      ci_col = ci_col) &
+      geom_hline(yintercept = 0, linetype = "dashed", color = "grey", size = 1.5) &
+      coord_cartesian(ylim = c(-1, 1)) &
+      scale_x_continuous(expand = c(0, 0)) &
+      ggtitle(name_plot) &
+      xlab(x_name) &
+      ylab(y_name) &
+      theme_bw() &
+      mynamestheme
+    p
+    dev.off()
+  }
+}
