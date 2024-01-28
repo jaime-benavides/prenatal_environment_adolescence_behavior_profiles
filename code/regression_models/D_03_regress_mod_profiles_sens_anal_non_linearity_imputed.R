@@ -11,7 +11,7 @@ covariates <- readRDS(paste0(generated.data.folder, "covariates.rds"))
 
 ## read profiles
 # exposure
-case_expo <- "na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part" # GC: seems to be a redundant line.
+case_expo <- "na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part" # GC: case_expo is defined here, but not used in next lines.
 exposure_profiles <- readRDS(paste0(generated.data.folder, "exposure_pcp_fa_profiles_scores_na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part_n_438.rds"))
 # outcome
 case_outc <- "16_yrs_na_75"
@@ -24,7 +24,7 @@ exposure_profiles_match <- exposure_profiles[which(exposure_profiles$SID %in% si
 
 colnames(exposure_profiles_match) <- c("SID", "exposure_prof_2", "exposure_prof_3", "exposure_prof_1")
 exposure_profiles_match <- exposure_profiles_match[,c("SID", "exposure_prof_1", "exposure_prof_2", "exposure_prof_3")]
-colnames(outcome_profiles_match) <- c("SID", "outcome_prof_3", "outcome_prof_1", "outcome_prof_2") # GC: numbers in variables' names suffix are not in order (3-1-2) while in the next line there are (I'm not sure it has any meaning, but putting it here just in case...).
+colnames(outcome_profiles_match) <- c("SID", "outcome_prof_3", "outcome_prof_1", "outcome_prof_2") 
 outcome_profiles_match <- outcome_profiles_match[,c("SID", "outcome_prof_1", "outcome_prof_2", "outcome_prof_3")]
 profiles <- dplyr::left_join(exposure_profiles_match, outcome_profiles_match, by = "SID")
 data <- dplyr::left_join(profiles, covariates, by = "SID")
@@ -96,7 +96,7 @@ mod_outc_3_expo_2 <- gam(outcome_prof_3 ~ s(exposure_prof_2) + GENDER + age + ma
 
 mod_outc_3_expo_2_imp <- with(df_imput, gam(outcome_prof_3 ~ s(exposure_prof_2) + GENDER + age + mat_ed_lvl + WSC_DS + WSC_COD + WASI_PRI_C + WASI_VCI_C + HOMETOT + B11 + TSC_H + ethnicity + T3QT))
 
-
+# GC: why models with imputed data are only for 'mod_outc_3_expo_1' and 'mod_outc_3_expo_2' and not for other models? (mod_outc_3_expo_3, for example)
 
 mod_outc_3_expo_3 <- gam(outcome_prof_3 ~ s(exposure_prof_3) + GENDER + age + mat_ed_lvl + WSC_DS + WSC_COD + WASI_PRI_C + WASI_VCI_C + HOMETOT + B11 + TSC_H + ethnicity + T3QT, 
                         data = data, 
@@ -127,7 +127,7 @@ mod_7 <- gratia::smooth_estimates(mod$analyses[[7]])
 
 
 png(paste0(output.folder, "nonline_sens_anal_mod_outc_3_expo_1_all_imputed_new.png"), 900, 460)
-gratia::draw(mod_outc_3_expo_1) &  
+gratia::draw(mod_outc_3_expo_1) &  # GC: the input of the draw() function is the regular model (not the imputed one), although the object mod contains the output of the imputed model.
   geom_line(data = mod_1, aes(x = exposure_prof_1, y = est, col = "red")) &
   geom_line(data = mod_2, aes(x = exposure_prof_1, y = est, col = "red")) &
   geom_line(data = mod_3, aes(x = exposure_prof_1, y = est, col = "red")) &
@@ -148,8 +148,8 @@ dev.off()
 
 
 sm <- "s(exposure_prof_2)"
-x_name <- "Exp P2: BPs_Phthalates"
-y_name <- "P3: All-Self survey"
+x_name <- "Exp P2: BPs_Phthalates" # GC: I suggest 'Exposure' rather than 'Exp'.
+y_name <- "P3: All-Self survey"    # GC: I suggest 'Behavior P3' instead of P3 alone.
 
 
 name_plot <- ""
@@ -165,7 +165,7 @@ mod_7 <- gratia::smooth_estimates(mod$analyses[[7]])
 
 # Figure S3
 png(paste0(output.folder, "nonline_sens_anal_mod_outc_3_expo_2_all_imputed_rev_valid_part_rev_scs_more_conf.png"), 900, 460)
-gratia::draw(mod_outc_3_expo_2) &  
+gratia::draw(mod_outc_3_expo_2) &  # GC: similar comment as in line 130.
   geom_line(data = mod_1, aes(x = exposure_prof_2, y = est, col = "red")) &
   geom_line(data = mod_2, aes(x = exposure_prof_2, y = est, col = "red")) &
   geom_line(data = mod_3, aes(x = exposure_prof_2, y = est, col = "red")) &
@@ -184,4 +184,4 @@ gratia::draw(mod_outc_3_expo_2) &
   mynamestheme 
 dev.off()
 
-
+# GC: It seems that the outputs of only mod_outc_3_expo_1_imp and mod_outc_3_expo_2_imp are presented in this figure, so there might no reason to run all other models in the current script (mod_outc_1_expo_1, mod_outc_1_expo_2, mod_outc_1_expo_3, etc.)
