@@ -63,8 +63,8 @@ mice::densityplot(df_imput)
 
 mice::stripplot(df_imput, pch = c(21, 20), cex = c(1, 1.5))
 
-# GC: Please consider adding here the following title to elaborate the difference between these models and models in script D01: Main models excluding potential mediators (birth weight and child IQ).
-mod_outc_1_expo_1 <- lm(outcome_prof_1 ~ exposure_prof_1 + GENDER + age + mat_ed_lvl + HOMETOT + TSC_H + ethnicity + T3QT, # GC: just pay attention that variable B11 was also excluded additional to WSC_DS, WSC_COD, WASI_PRI_C and WASI_VCI_C (I am not sure what B11 is, but just making sure it was intentional).
+# GC: Please consider adding here the following title (to highlight the difference between these models and models in script D01): Main models excluding potential mediators (birth weight and child IQ).
+mod_outc_1_expo_1 <- lm(outcome_prof_1 ~ exposure_prof_1 + GENDER + age + mat_ed_lvl + HOMETOT + TSC_H + ethnicity + T3QT, # GC: just pay attention that variable B11 was also excluded, additional to WSC_DS, WSC_COD, WASI_PRI_C and WASI_VCI_C (I am not sure what B11 is, but just making sure it was intentional).
                         data = data, 
                         na.action = na.omit)
 
