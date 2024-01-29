@@ -13,7 +13,7 @@ covariates <- readRDS(paste0(generated.data.folder, "covariates.rds"))
 # exposure
 exposure_profiles <- readRDS(paste0(generated.data.folder, "exposure_pcp_fa_profiles_scores_na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part_n_438.rds"))
 # outcome
-case_outc <- "16_yrs_na_75" # GC: redundant line (this is the only appearance of the object ‘case_outc’ in this script).
+case_outc <- "16_yrs_na_75" # GC: this is the only appearance of the object ‘case_outc’ in this script.
 outcome_profiles <- readRDS(paste0(generated.data.folder, "outcome_pcp_fa_profiles_scores_16_yrs_na_75_n_322_rev_scs.rds"))
 
 sid_match <- outcome_profiles$SID[which(outcome_profiles$SID  %in% exposure_profiles$SID)]
@@ -275,7 +275,7 @@ p<- gratia::draw(mod,
   mynamestheme
 p
 dev.off()
-# GC: duplicate lines in 105+127 ('y_name' is defined earlier in line 84), 171+193 ('y_name' is defined earlier in line 149), 238+260 ('y_name' is defined eralier in line 216).
+# GC: duplicate lines in 105+127 ('y_name' is defined earlier in line 84), 171+193 ('y_name' is defined earlier in line 149) and 238+260 ('y_name' is defined earlier in line 216).
 # GC: I suggest putting lines 78-277 in a nested loop for a more readable and concise code. Below is the suggested code (I checked what I could without the data and it seems to be working).
 # Please pay attention that the code is not marked as a comment (#) for an easy copy & run.
                                                                  
