@@ -1,4 +1,4 @@
-rm(list=ls())
+rm(list=ls()) # GC: it might be useful to add a brief description of what this script does (script's names doesn't provide a clear description).
 project.folder = paste0(print(here::here()),'/')
 source(paste0(project.folder,'0_01_init_directory_structure.R'))
 source(paste0(functions.folder,'script_initiate.R'))
@@ -15,12 +15,12 @@ sids_visit_16 <- readRDS(paste0(generated.data.folder, "sids_any_neurobehavioral
 summary(covariates[which(covariates$SID %in% sids_visit_16), "age"])
 ## read profiles
 # exposure
-case_expo <- "na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part"
+case_expo <- "na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part" # GC: case_expo is defined here, but not used elsewhere.
 exposure_profiles <- readRDS(paste0(generated.data.folder, "exposure_pcp_fa_profiles_scores_na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part_n_438.rds"))
 # outcome
 case_outc <- "16_yrs_na_50"
 outcome_profiles <- readRDS(paste0(generated.data.folder, "outcome_pcp_fa_profiles_scores_", case_outc, "_n_291_rev_scs.rds"))
-sid_match <- outcome_profiles$SID[which(outcome_profiles$SID  %in% exposure_profiles$SID)]
+sid_match <- outcome_profiles$SID[which(outcome_profiles$SID %in% exposure_profiles$SID)]
 
 outcome_profiles_match <- outcome_profiles[which(outcome_profiles$SID %in% sid_match),]
 exposure_profiles_match <- exposure_profiles[which(exposure_profiles$SID %in% sid_match),]
@@ -188,7 +188,7 @@ dplyr::mutate(estimate = Beta.fit, std.error = Beta.se) %>%
   dplyr::mutate(model_name = fct_relevel(model_name, 
                                    rev(c("mod_outc_1_expo_1", "mod_outc_1_expo_2", "mod_outc_1_expo_3",
                                      "mod_outc_2_expo_1", "mod_outc_2_expo_2", "mod_outc_2_expo_3",
-                                     "mod_outc_3_expo_1", "mod_outc_3_expo_2", "mod_outc_3_expo_3")))) %>%
+                                     "mod_outc_3_expo_1", "mod_outc_3_expo_2", "mod_outc_3_expo_3")))) %>% # GC: instead of lines 189-191 you may use: rev(mods))) %>%
   ggplot(aes(x = model_name, y = estimate, color = exposure_profile, shape=exposure_profile,
              ymin = estimate - 1.96*std.error,
              ymax = estimate + 1.96*std.error)) +
@@ -204,5 +204,3 @@ dplyr::mutate(estimate = Beta.fit, std.error = Beta.se) %>%
               axis.title.x = element_blank(), axis.title.y = element_blank()) + coord_flip() +
   labs(y = "Estimate", x = "Model")
 dev.off()
-
-
