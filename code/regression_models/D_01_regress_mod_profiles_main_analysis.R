@@ -7,19 +7,19 @@ data_path <- "/home/jbenavides/maklab/scratch/data/health/amy_r01_aim1/raw_data/
 ccceh_data_path <- paste0(data_path, "CCCEH_Data/")
 
 # read covariates 
-covariates <- readRDS(paste0(generated.data.folder, "covariates.rds")) # GC: generated.data.folder was not defined previously.
+covariates <- readRDS(paste0(generated.data.folder, "covariates.rds")) 
 # check age range of initial subset of cohort with administered interviews and surveys
 sids_visit_16 <- readRDS(paste0(generated.data.folder, "sids_any_neurobehavioral_data.rds"))
 
-summary(covariates[which(covariates$SID %in% sids_visit_16), "age"])   # GC: maybe a brief description of the SID variable will be helpful.
+summary(covariates[which(covariates$SID %in% sids_visit_16), "age"])
 ## read profiles
 # exposure
-case_expo <- "na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part" # GC: case_expo is defined here, but not used in the next line.
+case_expo <- "na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part" # GC: case_expo is defined here, but not used elsewhere.
 exposure_profiles <- readRDS(paste0(generated.data.folder, "exposure_pcp_fa_profiles_scores_na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part_n_438.rds"))
 # outcome
 case_outc <- "16_yrs_na_75"
 outcome_profiles <- readRDS(paste0(generated.data.folder, "outcome_pcp_fa_profiles_scores_", case_outc, "_n_322_rev_scs.rds"))
-sid_match <- outcome_profiles$SID[which(outcome_profiles$SID  %in% exposure_profiles$SID)] # GC: it will be informative to add a brief title indicating what is the meaning of the code in lines 22-29. 
+sid_match <- outcome_profiles$SID[which(outcome_profiles$SID %in% exposure_profiles$SID)] # GC: it may be informative to add here a brief title, something like: "Linking exposure and outcome profiles in the overlapping sample". 
  
 outcome_profiles_match <- outcome_profiles[which(outcome_profiles$SID %in% sid_match),]
 exposure_profiles_match <- exposure_profiles[which(exposure_profiles$SID %in% sid_match),]
@@ -46,7 +46,7 @@ data_imput <- data[,-1]
 predMat <- mice::make.predictorMatrix(data_imput)
 
 outcome_vars <- colnames(profiles)[-1]
-predMat[,outcome_vars] <- 0 # GC: I am not sure I understand why zero is assigned here. Does it mean that all variables in the profile dataset (except for the first one) are not used as predictors in the imputation?
+predMat[,outcome_vars] <- 0 
 
 ## CREATING A METHODS VECTOR FOR IMPUTATIOM
 impmethod <- mice::make.method(data_imput)
@@ -196,7 +196,7 @@ dplyr::mutate(estimate = Beta.fit, std.error = Beta.se) %>%
   dplyr::mutate(model_name = fct_relevel(model_name, 
                                    rev(c("mod_outc_1_expo_1", "mod_outc_1_expo_2", "mod_outc_1_expo_3",
                                      "mod_outc_2_expo_1", "mod_outc_2_expo_2", "mod_outc_2_expo_3",
-                                     "mod_outc_3_expo_1", "mod_outc_3_expo_2", "mod_outc_3_expo_3")))) %>% # GC: you may use 'mods' (defined in lines 167-169) instead of this long vector.
+                                     "mod_outc_3_expo_1", "mod_outc_3_expo_2", "mod_outc_3_expo_3")))) %>% # GC: instead of lines 197-199 you may use: rev(mods))) %>%
   ggplot(aes(x = model_name, y = estimate, color = exposure_profile, shape=exposure_profile,
              ymin = estimate - 1.96*std.error,
              ymax = estimate + 1.96*std.error)) +
@@ -213,4 +213,7 @@ dplyr::mutate(estimate = Beta.fit, std.error = Beta.se) %>%
   labs(y = "Estimate", x = "Model")
 dev.off()
 
-
+# GC: A general suggestion: please consider save the 'data' dataframe generated in lines 1-42 as rds,
+# so in subsequent scripts you will be able to simply read the rds instead of generating the dataset all over again (except for script D04 which utilizes a different outcome_profiles dataset).
+# In that manner you can remove lines 1-35 in script D02, 1-36 in D03 and 1-42 in D05 (verified via Diffchecker: https://www.diffchecker.com/text-compare/).
+# You may also save the imputed dataset generated in scripts D01, D03 and D05 in the same manner.
