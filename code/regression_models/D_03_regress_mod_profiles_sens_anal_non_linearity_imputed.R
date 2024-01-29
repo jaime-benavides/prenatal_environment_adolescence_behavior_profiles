@@ -96,8 +96,8 @@ mod_outc_3_expo_2 <- gam(outcome_prof_3 ~ s(exposure_prof_2) + GENDER + age + ma
 
 mod_outc_3_expo_2_imp <- with(df_imput, gam(outcome_prof_3 ~ s(exposure_prof_2) + GENDER + age + mat_ed_lvl + WSC_DS + WSC_COD + WASI_PRI_C + WASI_VCI_C + HOMETOT + B11 + TSC_H + ethnicity + T3QT))
 
-# GC: why models with imputed data are only for 'mod_outc_3_expo_1' and 'mod_outc_3_expo_2' and not for other models? (mod_outc_3_expo_3, for example)
-
+# GC: why are models with imputed data generated only for 'mod_outc_3_expo_1' and 'mod_outc_3_expo_2' and not for other models? (mod_outc_3_expo_3, etc)
+                                                                 
 mod_outc_3_expo_3 <- gam(outcome_prof_3 ~ s(exposure_prof_3) + GENDER + age + mat_ed_lvl + WSC_DS + WSC_COD + WASI_PRI_C + WASI_VCI_C + HOMETOT + B11 + TSC_H + ethnicity + T3QT, 
                         data = data, 
                         na.action = na.omit)
@@ -127,7 +127,7 @@ mod_7 <- gratia::smooth_estimates(mod$analyses[[7]])
 
 
 png(paste0(output.folder, "nonline_sens_anal_mod_outc_3_expo_1_all_imputed_new.png"), 900, 460)
-gratia::draw(mod_outc_3_expo_1) &  # GC: the input of the draw() function is the regular model (not the imputed one), although the object mod contains the output of the imputed model.
+gratia::draw(mod_outc_3_expo_1) &  # GC: the input of the draw() function is the regular model (not the imputed one), although the object 'mod' which is visualized here contains the output of the imputed model.
   geom_line(data = mod_1, aes(x = exposure_prof_1, y = est, col = "red")) &
   geom_line(data = mod_2, aes(x = exposure_prof_1, y = est, col = "red")) &
   geom_line(data = mod_3, aes(x = exposure_prof_1, y = est, col = "red")) &
@@ -149,7 +149,7 @@ dev.off()
 
 sm <- "s(exposure_prof_2)"
 x_name <- "Exp P2: BPs_Phthalates" # GC: I suggest 'Exposure' rather than 'Exp'.
-y_name <- "P3: All-Self survey"    # GC: I suggest 'Behavior P3' instead of P3 alone.
+y_name <- "P3: All-Self survey"    # GC: I suggest 'Behavior P3' instead of 'P3'.
 
 
 name_plot <- ""
