@@ -215,5 +215,5 @@ dev.off()
 
 # GC: A general suggestion: please consider save the 'data' dataframe generated in lines 1-42 as rds,
 # so in subsequent scripts you will be able to simply read the rds instead of generating the dataset all over again (except for script D04 which utilizes a different outcome_profiles dataset).
-# In that manner you can remove lines 1-35 in script D02, 1-36 in D03 and 1-42 in D05 (verified via Diffchecker: https://www.diffchecker.com/text-compare/).
+# In that manner you can remove lines 1-35 in script D02, 1-36 in D03 and 1-42 in D05 (I verified via Diffchecker: https://www.diffchecker.com/text-compare/; there are only minor differences between scripts).
 # You may also save the imputed dataset generated in scripts D01, D03 and D05 in the same manner.
