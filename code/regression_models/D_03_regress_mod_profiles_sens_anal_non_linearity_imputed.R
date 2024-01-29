@@ -184,4 +184,4 @@ gratia::draw(mod_outc_3_expo_2) &  # GC: similar comment as in line 130.
   mynamestheme 
 dev.off()
 
-# GC: It seems that the outputs of only mod_outc_3_expo_1_imp and mod_outc_3_expo_2_imp are presented in this figure, so there might no reason to run all other models in the current script (mod_outc_1_expo_1, mod_outc_1_expo_2, mod_outc_1_expo_3, etc.)
+# GC: It seems that the outputs of only mod_outc_3_expo_1_imp and mod_outc_3_expo_2_imp are presented in this figure, so there might be no reason to run all other models in the current script (mod_outc_1_expo_1, mod_outc_1_expo_2, mod_outc_1_expo_3, etc.)
