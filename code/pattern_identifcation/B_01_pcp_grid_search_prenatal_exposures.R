@@ -182,7 +182,5 @@ plot_ly(data = rrmc_results$summary_stats, x = ~eta, y = ~r, z = ~S_sparsity, ty
 # the optimal configuration is the one below (rank 3 and eta level 0.12)
 pcp_outs <- RRMC(data$M, r = 3, eta = 0.12, LOD = LOD)
 saveRDS(pcp_outs, file = paste0(generated.data.folder, "pren_exposures_pcp_rrmc_na_", na_tol, "_scale_TRUE_grav_rev_SHS_rev_valid_part.rds"))
-# 
-pcp_outs <- readRDS(file = paste0(generated.data.folder, "pren_exposures_pcp_rrmc_na_", na_tol, "_scale_TRUE_grav_rev_SHS_rev_valid_part.rds"))
 
 
