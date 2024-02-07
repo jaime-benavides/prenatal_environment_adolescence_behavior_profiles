@@ -31,22 +31,21 @@ exposures <- readRDS(paste0(generated.data.folder, "exposures_for_profiles_rev_s
 ### eda 
 ## prenatal period
 ms <- unique(exposures$month)
-m <- 1 # prenatal # GC: Is this the full comment? I'm not sure I understand what it means. 
-
+m <- 1 # m = 1 for prenatal visit because ms[1] = 0 
 expo_per_raw <- exposures[exposures$month == ms[m],]
 
-# obtain sid for visit 16 years old (for age range paper) # GC: the text in brackets is not very clear.
+# assign participant identification
 rownames(expo_per_raw) <- expo_per_raw$SID
 expo_per_raw_vars <- expo_per_raw[,-c(1,2)]
 
 # delete empty variables (those with no subjects prenatal visit)
 expo_per_raw <- expo_per_raw[,-c(as.numeric(which((colSums(is.na(expo_per_raw))/nrow(expo_per_raw)) == 1)))] # GC: this code is a little hard to follow. maybe a brief explanation will be helpful here.
-# apply criteria of missing data per row and column # GC: Is this the comment for the next row?
-tot_subj <- nrow(expo_per_raw)
 
-# create the exposure social stress variables
+
+# create the aggregate exposures for the social stress variables
 expo_per_raw$demoralization <- rowSums(expo_per_raw[,c(paste0("L", sprintf('%0.2d', 1:27)))], na.rm = T)
 expo_per_raw$material_hardship <- rowSums(expo_per_raw[,c(paste0("A", 10:17))], na.rm = T)
+
 # add to description the new variables 
 add_desc <- data.frame(variable_name = c("demoralization", "material_hardship", "E10"), 
                        variable_description = c("total demoralization", "total material_hardship", "questionnaire second-hand smoke"), 
@@ -60,8 +59,6 @@ add_desc <- data.frame(variable_name = c("demoralization", "material_hardship", 
 expo_per_raw <- expo_per_raw[,-which(grepl('^A', colnames(expo_per_raw)) | grepl('^L', colnames(expo_per_raw)))] # starts with AB?
 exposure_description <- exposure_description[-which(grepl('^A', exposure_description$variable_name) | grepl('^L', exposure_description$variable_name)), ]
 
-# check if any smokers in the cohort
-sid_smokers <- expo_per_raw[which(expo_per_raw$E01 == 1), "SID"] # 14 participants have reported to be active smokers and + 27 have cotinine levels higher than 1 
 # delete unused tobacco smoke variables
 expo_per_raw <- expo_per_raw[,-c(4,5)]
 # plot nas (used to inform ##Figure 1)
@@ -74,9 +71,9 @@ pdf(paste0(output.folder, "prenatal_exposure_na_orig_data_matrix_n_727_rev_grav_
 grid.table(x)
 dev.off()
 
+# apply missingness criteria
 na_tol <- 50 # cut-off of data missingness
 expo_per_row_comp <- expo_per_raw[-which((rowMeans(is.na(expo_per_raw)))*100 > na_tol),]
-nrow(expo_per_row_comp) / tot_subj
 if(any(which((colMeans(is.na(expo_per_row_comp)))*100 > na_tol))){
 expo_per_row_comp <- expo_per_row_comp[,-which((colMeans(is.na(expo_per_row_comp)))*100 > na_tol)]
 }
@@ -87,7 +84,7 @@ expo_per_id_month <- expo_per[,c("SID", "month")]
 
 # update data description (this is an object to keep track of naming and description for variables)
 expo_desc_loc <- exposure_description[
-  which(exposure_description$month == unique(expo_per$month) & # todo: generalize to sid and month any order # GC: Please don't forget this todo here.
+  which(exposure_description$month == unique(expo_per$month) & 
           exposure_description$exposure %in% colnames(expo_per[,-which(colnames(expo_per) %in% c("SID", "month"))])),]
 expo_desc_loc <- expo_desc_loc[!duplicated(expo_desc_loc$variable_name), ]
 expo_desc_loc <- rbind(expo_desc_loc, add_desc)
