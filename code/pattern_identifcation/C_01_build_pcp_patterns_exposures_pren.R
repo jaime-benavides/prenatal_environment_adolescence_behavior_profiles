@@ -80,7 +80,7 @@ obliq %>% walk(print, digits = 2, sort = T)
 
 obliq_ebics <- obliq %>% map_dbl(~.$EBIC)
 
-# ebic is same
+# ebic is same to orthogonal
 
 best_fit <- which.min(ortho_ebics)
 
