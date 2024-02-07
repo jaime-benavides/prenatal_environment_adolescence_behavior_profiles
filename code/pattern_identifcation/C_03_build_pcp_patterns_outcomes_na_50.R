@@ -1,5 +1,4 @@
 rm(list=ls())
-.libPaths(c(.libPaths(), "/home/jbenavides/R/x86_64-pc-linux-gnu-library/4.1"))
 # 1a Declare root directory, folder locations and load essential stuff
 project.folder = paste0(print(here::here()),'/')
 source(paste0(project.folder,'0_01_init_directory_structure.R'))
