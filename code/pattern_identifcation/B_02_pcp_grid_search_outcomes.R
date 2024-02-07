@@ -1,6 +1,5 @@
 # First step to load packages etc.
 rm(list=ls())
-.libPaths(c(.libPaths(), "/home/jbenavides/R/x86_64-pc-linux-gnu-library/4.1"))
 library(rvest)
 library(qdapRegex)
 library(stringi)
@@ -65,7 +64,4 @@ plot_ly(data = rrmc_results$summary_stats, x = ~eta, y = ~r, z = ~S_sparsity, ty
 # the optimal configuration is the one below (rank 3 and eta level 0.11)
 # # run PCP 
 pcp_outs <- RRMC( data$M, r = 3, eta = 0.11, LOD = LOD)
-# # 
-sum(pcp_outs$L<0)/prod(dim(pcp_outs$L)) # 12 % below 0 in L matrix
-sum(pcp_outs$L<(-1/2))/prod(dim(pcp_outs$L)) # 0% below -1/2
 saveRDS(pcp_outs, file = paste0(generated.data.folder, "pcp_rrmc_outcome_", mon/12, "_yrs_na_", na_level, "scale", scale, "_rev_scs.rds"))
