@@ -38,7 +38,7 @@ runs = 35 # number of iterations
 LOD = rep(0, ncol(data$M)) # lods in this case all are equal to zero; we add them because are needed for the algorithm to run
 perc_test = 0.10 # percent to leave out for testing 
 cores = parallel::detectCores(logical = F) /2 # number of cores
-# 3b. Run gridsearch:
+# 3b. Run gridsearch: # GC: This is 3b, but I haven't seen 3a or 2a (only 1a)
 with_progress(expr = {
   rrmc_results <- vanilla_search(
     cores = cores,
@@ -48,14 +48,14 @@ with_progress(expr = {
     LOD = LOD,
     perc_test = perc_test,
     runs = runs,
-    save_as = paste0(generated.data.folder,"pcp_outcomes_vanilla_", mon/12, "_yrs_na_", na_level ,"_scale", "_", scale, "rev_scs")
+    save_as = paste0(generated.data.folder,"pcp_outcomes_vanilla_", mon/12, "_yrs_na_", na_level ,"_scale", "_", scale, "rev_scs") # GC: I suppose that "rds." at the end is missing.
   )
 })
 # # read results
 rrmc_results <- readRDS(paste0(generated.data.folder,"pcp_outcomes_vanilla_", mon/12, "_yrs_na_", na_level ,"_scale", "_", scale, "rev_scs.rds"))
 
 # # # 3c. The best parameter setting according to relative error (the lower the better) and sparsity (about 99)...  r = 3, eta = 0.11
-rrmc_results$summary_stats %>% slice_min(rel_err)
+rrmc_results$summary_stats %>% slice_min(rel_err) # GC: It seems that this row is redundant (the output is not saved for subsequent use; please consider removing.
 # # 
 # # # 3d. Visualizing the whole gridsearch:
 plot_ly(data = rrmc_results$summary_stats, x = ~eta, y = ~r, z = ~rel_err, type = "heatmap")
