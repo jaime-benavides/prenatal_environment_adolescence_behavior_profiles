@@ -15,7 +15,7 @@ library(plotly)    # for visualizing the gridsearches
 library(progressr) # needed for progress bars with the new PCP gridsearch
 library(tidyverse)
 
-# 1a Declare root directory, folder locations and load essential stuff
+# 1a Declare root directory, folder locations and load essential stuff 
 project.folder = paste0(print(here::here()),'/')
 source(paste0(project.folder,'0_01_init_directory_structure.R'))
 source(paste0(functions.folder,'script_initiate.R'))
@@ -24,7 +24,7 @@ source(paste0(functions.folder,'script_initiate.R'))
 
 # PCP 
 # second vanilla search
-mon <- 192
+mon <- 192  # GC: maybe add '16 years old' as in B_02 script to make clear what it means.
 na_level <- 50 #  inclusion criterion of percent missingness in behavioral data
 scale <- "TRUE"
 # read behavioral outcomes (generated at A_06_put_together_outcomes.R)
@@ -40,7 +40,7 @@ runs = 35 # number of iterations
 LOD = rep(0, ncol(data$M)) # lods in this case all are equal to zero; we add them because are needed for the algorithm to run
 perc_test = 0.10 # percent to leave out for testing 
 cores = parallel::detectCores(logical = F) /2 # number of cores
-# 3b. Run gridsearch:
+# 3b. Run gridsearch: # GC: The numbering skips from 1a to 3b. 
 with_progress(expr = {
   rrmc_results <- vanilla_search(
     cores = cores,
@@ -56,7 +56,7 @@ with_progress(expr = {
 # # read results
 rrmc_results <- readRDS(paste0(generated.data.folder,"pcp_outcomes_vanilla_", mon/12, "_yrs_na_", na_level ,"_scale", "_", scale, "rev_scs.rds"))
 
-# # # 3c. The best parameter setting according to relative error (the lower the better) and sparsity (about 99)...  r = 3, eta = 0.11
+# # # 3c. The best parameter setting according to relative error (the lower the better) and sparsity (about 99)...  r = 3, eta = 0.11 
 rrmc_results$summary_stats %>% slice_min(rel_err)
 # # 
 # # # 3d. Visualizing the whole gridsearch:
