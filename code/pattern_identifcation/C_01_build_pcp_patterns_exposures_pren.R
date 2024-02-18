@@ -17,14 +17,14 @@ case <- "na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part" # name file
 # read exposure data
 expo_prep <- readRDS(paste0(generated.data.folder, "data_row_comp_", case, ".rds"))
 # build matrix data 
-data <- list("M" = expo_prep[,-c(which(colnames(expo_prep) %in% c("SID", "month")))]) %>% purrr::map(as.matrix)
+data <- list("M" = expo_prep[,-c(which(colnames(expo_prep) %in% c("SID", "month")))]) %>% purrr::map(as.matrix) 
 # read data description
 exposure_description <- readRDS(paste0(generated.data.folder, "exposure_description.rds"))
 
 # read pcp results
 pcp_outs <- readRDS(paste0(generated.data.folder, "pren_exposures_pcp_rrmc_na_", na_level, "_scale_TRUE_grav_rev_SHS_rev_valid_part.rds")) # pcp_outs
 # give name to pcp run for plotting results
-pcp_run <- paste0("rrmc_exposure_", mon/12, "_yrs_na_", na_level, "_scale_", scale, "rev_grav_corr_rev_SHS_rev_valid_part")
+pcp_run <- paste0("rrmc_exposure_", mon/12, "_yrs_na_", na_level, "_scale_", scale, "rev_grav_corr_rev_SHS_rev_valid_part") # GC: an underscore is missing before "rev_grav_corr_rev_SHS_rev_valid_part" (after scale,).
 
 # variables need to be re-ordered for generating plots consistently with input data categories (first social stress, then air pollutants and dna adducts and then endocrine disruptors)
 cn_orig <- colnames(pcp_outs$S)
@@ -59,7 +59,7 @@ colgroups_m[which(colgroups_m$column_names %in% c("demoralization", "material_ha
 colgroups_m[which(colgroups_m$column_names %in% c("UBPA")),"family"] <- "bisphenol"
 colgroups_m[which(colgroups_m$column_names %in% c("SHS")),"family"] <- "secondhand smoke"
 
-factors <- 1:L.rank
+factors <- 1:L.rank # GC: Was the object L.rank defined before? I looked in other scripts - appears in C02 and C03 - but still it’s not clear where it is assigned a value (and what is the value).
 
 # Orthogonal Model (want factors as independent from one another as possible, get uncorrelated results):
 n <- nrow(pcp_outs$L)
