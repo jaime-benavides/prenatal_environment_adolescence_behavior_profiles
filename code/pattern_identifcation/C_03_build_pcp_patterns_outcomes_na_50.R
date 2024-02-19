@@ -15,13 +15,13 @@ na_level <- 50
 scale <- "TRUE"
 case <- paste0(mon/12, "_yrs_na_", na_level)
 # data prepared at A_01_pcp_outcomes_rrmc_grid_search
-outc_prep <- readRDS(paste0(generated.data.folder, "data_with_ids_outc_",mon/12, "_yrs_na_", na_level ,"_scale", "_", scale, ".rds"))
-data <- readRDS(paste0(generated.data.folder, "data_outc_",mon/12, "_yrs_na_", na_level ,"_scale", "_", scale,".rds"))
+outc_prep <- readRDS(paste0(generated.data.folder, "data_with_ids_outc_",mon/12, "_yrs_na_", na_level ,"_scale", "_", scale, ".rds")) # GC: may use 'case' instead of 'mon/12, "_yrs_na_", na_level'.
+data <- readRDS(paste0(generated.data.folder, "data_outc_",mon/12, "_yrs_na_", na_level ,"_scale", "_", scale,".rds")) # GC: may use 'case' instead of 'mon/12, "_yrs_na_", na_level'.
 outcome_description <- readRDS(paste0(generated.data.folder, "outcome_description.rds"))
 
-# read pcp results (todo harmonize descriptions)
-pcp_outs <- readRDS(paste0(generated.data.folder, "pcp_rrmc_outcome_", mon/12, "_yrs_na_", na_level,  "scale", scale, "_rev_scs.rds")) # pcp_outs
-pcp_run <- paste0("rrmc_outcome_", mon/12, "_yrs_na_", na_level, "_scale_", scale)
+# read pcp results (todo harmonize descriptions) # GC: please don't forget this todo here.
+pcp_outs <- readRDS(paste0(generated.data.folder, "pcp_rrmc_outcome_", mon/12, "_yrs_na_", na_level,  "scale", scale, "_rev_scs.rds")) # pcp_outs # GC: may use 'case' instead of 'mon/12, "_yrs_na_", na_level'.
+pcp_run <- paste0("rrmc_outcome_", mon/12, "_yrs_na_", na_level, "_scale_", scale) # GC: may use 'case' instead of 'mon/12, "_yrs_na_", na_level'.
 cn <- colnames(pcp_outs$S)
 outcome_description <- outcome_description[which(outcome_description$variable_name %in% cn),]
 outcome_description <- outcome_description[which(outcome_description$month == mon),]
@@ -34,7 +34,7 @@ colgroups_l <- data.frame(column_names = colnames(pcp_outs$L),
 colgroups_m <- data.frame(column_names = colnames(data$M), 
                           family = outcome_description[match(colnames(data$M), outcome_description$variable_name), "family"])
 
-factors <- 1:L.rank
+factors <- 1:L.rank # GC: similar to previous scripts, just checking whether L.rank was defined earlier.
 
 # run factor analysis
 # Orthogonal Model (want factors as independent from one another as possible, get uncorrelated results):
