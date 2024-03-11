@@ -18,7 +18,7 @@ project.folder = paste0(print(here::here()),'/')
 source(paste0(project.folder,'0_01_init_directory_structure.R'))
 source(paste0(functions.folder,'script_initiate.R'))
 
-# load prepared exposure data
+# load exposure data
 df_mh <- readRDS(paste0(generated.data.folder, "material_hardship.rds"))
 df_els <- readRDS(paste0(generated.data.folder, "mother_perceived_stress.rds"))
 df_nq <- readRDS(paste0(generated.data.folder, "neighborhood_quality.rds"))
@@ -46,10 +46,12 @@ sids <- sids[order(sids)]
 months <- unique(c(df_mh$month, df_els$month, df_nq$month, df_ipv$month, df_ss$month, df_dem$month, df_disc$month, df_smk$month,df_pah$month, df_bpa$month, df_phthal$month, df_pbde$month))
 months <- months[order(months)]
 exposures <- data.frame()
+# create a dataframe that contains subject id and month for temporal reference
 for(i in 1:length(sids)){
   df_loc <- data.frame(SID = sids[i], month = months)
   exposures <- rbind(exposures, df_loc)
 }
+# add exposures to the previous dataframe
 exposures <- exposures %>%
   dplyr::left_join(df_mh, by = c("SID", "month")) %>%
   dplyr::left_join(df_els, by = c("SID", "month"))  %>%
@@ -64,4 +66,5 @@ exposures <- exposures %>%
   dplyr::left_join(df_phthal, by = c("SID", "month")) %>%
   dplyr::left_join(df_pbde, by = c("SID", "month")) %>%
   dplyr::left_join(df_pah_adducts, by = c("SID", "month"))
+# save exposures
 saveRDS(exposures, paste0(generated.data.folder,"exposures.rds"))
