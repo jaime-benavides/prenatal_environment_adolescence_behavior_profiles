@@ -29,7 +29,7 @@ df_disc <- readRDS(paste0(generated.data.folder, "discrimination.rds"))
 df_smk <- readRDS(paste0(generated.data.folder, "smoke_cot_derivative_self_report.rds"))
 df_bpa <- readRDS(paste0(generated.data.folder, "bisphenols_specific_gravity_corr.rds"))
 df_bpa <- df_bpa[,-which(colnames(df_bpa) %in% c("M1SG","specific_gravity_corr"))]
-df_phthal <- readRDS(paste0(generated.data.folder, "phthalates_specific_gravity_corr.rds")) # todo: rerun profiles with corrected
+df_phthal <- readRDS(paste0(generated.data.folder, "phthalates_specific_gravity_corr.rds")) # todo: rerun profiles with corrected # GC: Please don't forget this todo :)
 df_phthal <- df_phthal[,-which(colnames(df_phthal) %in% c("M1SG","specific_gravity_corr"))]
 df_phthal_lod <- readRDS(paste0(generated.data.folder, "phthalates_below_lod.rds"))
 df_smk <- df_smk[,c("SID", "month", "E10", "E01", "smk_self")]
