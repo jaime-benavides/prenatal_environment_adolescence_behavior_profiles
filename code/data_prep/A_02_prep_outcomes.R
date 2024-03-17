@@ -28,14 +28,14 @@ df_yrbss16 <- readRDS(paste0(generated.data.folder, "yrbss16.rds"))
 df_yrbss16 <- df_yrbss16[,c("SID", "month", "risky_drug_use")]
 df_yrbss16 <- df_yrbss16[-which(duplicated(df_yrbss16$SID)),]
 df_yrs14_16 <- readRDS(paste0(generated.data.folder, "yrs_14_16.rds"))
-df_conners <- readRDS(paste0(generated.data.folder, "conners.rds")) #
+df_conners <- readRDS(paste0(generated.data.folder, "conners.rds")) # # GC: a redundant hashtag sign
 df_scs16 <- readRDS(paste0(generated.data.folder, "scs16_rev.rds"))
 df_scs16 <- df_scs16[,c("SID", "month", "total_self_control_prob")]
 outcome_description <- readRDS(paste0(generated.data.folder, "outcome_description.rds"))
 # create a dataframe that includes all the combinations of SID and month contained in the above datasets
 sids <- unique(c(df_adhd16$SID, df_time16$SID, df_ksads16$SID, df_yrs14_16$SID,df_conners$SID, df_scs16$SID, df_yrbss16$SID))
 sids <- sids[order(sids)]
-months <- unique(c(df_adhd16$month, df_time16$month, df_ksads16$month, df_yrs14_16$month, df_conners$month, df_scs16$month))
+months <- unique(c(df_adhd16$month, df_time16$month, df_ksads16$month, df_yrs14_16$month, df_conners$month, df_scs16$month)) # GC: the 'df_yrbss16' data frame is missing (while appears in line 36 for creating 'sids').
 months <- months[order(months)]
 outcomes <- data.frame()
 # create a dataframe containing subject id and month for temporal reference
@@ -92,7 +92,7 @@ for(n in 1:length(na_maxs)){ # for each threshold level of data missingness
     if(nrow(outc_per_raw_row_comp) / tot_subj > 0){
       # delete columns that have more data missingness than allowed by missingness threshold
       if(length(which((colMeans(is.na(outc_per_raw_row_comp)))*100 > na_maxs[n])) > 0){
-        outc_per_raw_row_comp <- outc_per_raw_row_comp[,-which((colMeans(is.na(outc_per_raw_row_comp)))*100 > na_maxs[n])] # todo: check this 25
+        outc_per_raw_row_comp <- outc_per_raw_row_comp[,-which((colMeans(is.na(outc_per_raw_row_comp)))*100 > na_maxs[n])] # todo: check this 25 # GC: please remove comment if task is done.
       }
       # subset data description
       outc_per <- outc_per_raw_row_comp
