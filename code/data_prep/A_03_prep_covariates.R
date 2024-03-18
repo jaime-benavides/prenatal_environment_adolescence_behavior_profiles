@@ -16,7 +16,7 @@ data_path <- "/home/jbenavides/maklab/scratch/data/health/amy_r01_aim1/raw_data/
 ccceh_data_path <- paste0(data_path, "CCCEH_Data/")
 
 # read covariates 
-prenatal <- read_csv(paste0(ccceh_data_path, "PRENATAL.csv")) # b11
+prenatal <- read_csv(paste0(ccceh_data_path, "PRENATAL.csv")) # b11 # GC: According to the next lines, b11 is not found in prenatal.
 prenatal <- prenatal[,c("SID","A04_0", "A18_0")]
 prenatal <- prenatal %>% dplyr::rename(mat_ed_lvl = A04_0, ethnicity = A18_0)
 bchart <- read_csv(paste0(ccceh_data_path, "BCHART.csv")) # b11
