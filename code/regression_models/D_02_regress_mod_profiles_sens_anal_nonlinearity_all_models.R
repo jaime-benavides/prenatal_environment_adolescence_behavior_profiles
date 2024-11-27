@@ -275,9 +275,9 @@ p<- gratia::draw(mod,
   mynamestheme
 p
 dev.off()
-# GC: duplicate lines in 105+127 ('y_name' is defined earlier in line 84), 171+193 ('y_name' is defined earlier in line 149) and 238+260 ('y_name' is defined earlier in line 216).
-# GC: I suggest putting lines 78-277 in a nested loop for a more readable and concise code. Below is the suggested code (I checked what I could without the data and it seems to be working).
-# Please pay attention that the code is not marked as a comment (#) for an easy copy & run.
+
+
+
                                                                  
 ## Figure S1
 

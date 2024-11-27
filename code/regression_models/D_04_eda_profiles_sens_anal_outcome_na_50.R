@@ -1,4 +1,4 @@
-rm(list=ls()) # GC: it might be useful to add a brief description of what this script does (script's names doesn't provide a clear description).
+rm(list=ls()) 
 project.folder = paste0(print(here::here()),'/')
 source(paste0(project.folder,'0_01_init_directory_structure.R'))
 source(paste0(functions.folder,'script_initiate.R'))
@@ -15,7 +15,7 @@ sids_visit_16 <- readRDS(paste0(generated.data.folder, "sids_any_neurobehavioral
 summary(covariates[which(covariates$SID %in% sids_visit_16), "age"])
 ## read profiles
 # exposure
-case_expo <- "na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part" # GC: case_expo is defined here, but not used elsewhere.
+case_expo <- "na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part" 
 exposure_profiles <- readRDS(paste0(generated.data.folder, "exposure_pcp_fa_profiles_scores_na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part_n_438.rds"))
 # outcome
 case_outc <- "16_yrs_na_50"

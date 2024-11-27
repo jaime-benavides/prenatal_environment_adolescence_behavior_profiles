@@ -39,7 +39,7 @@ rownames(expo_per_raw) <- expo_per_raw$SID
 expo_per_raw_vars <- expo_per_raw[,-c(1,2)]
 
 # delete empty variables (those with no subjects prenatal visit)
-expo_per_raw <- expo_per_raw[,-c(as.numeric(which((colSums(is.na(expo_per_raw))/nrow(expo_per_raw)) == 1)))] # GC: this code is a little hard to follow. maybe a brief explanation will be helpful here.
+expo_per_raw <- expo_per_raw[,-c(as.numeric(which((colSums(is.na(expo_per_raw))/nrow(expo_per_raw)) == 1)))] 
 
 
 # create the aggregate exposures for the social stress variables
@@ -56,7 +56,7 @@ add_desc <- data.frame(variable_name = c("demoralization", "material_hardship", 
                        table_description = c("prenatal questionnaire", "prenatal questionnaire", "tobacco questionnaire and cotinine measurements"))
 
 # delete variables of items for demoralization and material hardship
-expo_per_raw <- expo_per_raw[,-which(grepl('^A', colnames(expo_per_raw)) | grepl('^L', colnames(expo_per_raw)))] # starts with AB?
+expo_per_raw <- expo_per_raw[,-which(grepl('^A', colnames(expo_per_raw)) | grepl('^L', colnames(expo_per_raw)))] 
 exposure_description <- exposure_description[-which(grepl('^A', exposure_description$variable_name) | grepl('^L', exposure_description$variable_name)), ]
 
 # delete unused tobacco smoke variables

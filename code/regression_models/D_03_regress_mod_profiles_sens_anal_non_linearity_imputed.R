@@ -11,7 +11,7 @@ covariates <- readRDS(paste0(generated.data.folder, "covariates.rds"))
 
 ## read profiles
 # exposure
-case_expo <- "na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part" # GC: case_expo is defined here, but not used in next lines.
+case_expo <- "na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part" 
 exposure_profiles <- readRDS(paste0(generated.data.folder, "exposure_pcp_fa_profiles_scores_na_50_reduced_rev_grav_corr_rev_shs_rev_valid_part_n_438.rds"))
 # outcome
 case_outc <- "16_yrs_na_75"
@@ -127,7 +127,7 @@ mod_7 <- gratia::smooth_estimates(mod$analyses[[7]])
 
 
 png(paste0(output.folder, "nonline_sens_anal_mod_outc_3_expo_1_all_imputed_new.png"), 900, 460)
-gratia::draw(mod_outc_3_expo_1) &  # GC: the input of the draw() function is the regular model (not the imputed one), although the object 'mod' which is visualized here contains the output of the imputed model.
+gratia::draw(mod_outc_3_expo_1) &  
   geom_line(data = mod_1, aes(x = exposure_prof_1, y = est, col = "red")) &
   geom_line(data = mod_2, aes(x = exposure_prof_1, y = est, col = "red")) &
   geom_line(data = mod_3, aes(x = exposure_prof_1, y = est, col = "red")) &
@@ -148,8 +148,8 @@ dev.off()
 
 
 sm <- "s(exposure_prof_2)"
-x_name <- "Exp P2: BPs_Phthalates" # GC: I suggest 'Exposure' rather than 'Exp'.
-y_name <- "P3: All-Self survey"    # GC: I suggest 'Behavior P3' instead of 'P3'.
+x_name <- "Exp P2: BPs_Phthalates" 
+y_name <- "P3: All-Self survey"    
 
 
 name_plot <- ""
@@ -165,7 +165,7 @@ mod_7 <- gratia::smooth_estimates(mod$analyses[[7]])
 
 # Figure S3
 png(paste0(output.folder, "nonline_sens_anal_mod_outc_3_expo_2_all_imputed_rev_valid_part_rev_scs_more_conf.png"), 900, 460)
-gratia::draw(mod_outc_3_expo_2) &  # GC: similar comment as in line 130.
+gratia::draw(mod_outc_3_expo_2) &  
   geom_line(data = mod_1, aes(x = exposure_prof_2, y = est, col = "red")) &
   geom_line(data = mod_2, aes(x = exposure_prof_2, y = est, col = "red")) &
   geom_line(data = mod_3, aes(x = exposure_prof_2, y = est, col = "red")) &
@@ -184,4 +184,3 @@ gratia::draw(mod_outc_3_expo_2) &  # GC: similar comment as in line 130.
   mynamestheme 
 dev.off()
 
-# GC: It seems that the outputs of only mod_outc_3_expo_1_imp and mod_outc_3_expo_2_imp are presented in this figure, so there might be no reason to run all other models in the current script (mod_outc_1_expo_1, mod_outc_1_expo_2, mod_outc_1_expo_3, etc.)

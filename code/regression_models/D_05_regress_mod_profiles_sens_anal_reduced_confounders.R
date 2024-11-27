@@ -1,5 +1,4 @@
 rm(list=ls())
-.libPaths(c(.libPaths(), "/home/jbenavides/R/x86_64-pc-linux-gnu-library/4.1")) # GC: first time I see this line - shouldn't it appear in the first script?
 # 1a Declare root directory, folder locations and load essential stuff
 project.folder = paste0(print(here::here()),'/')
 source(paste0(project.folder,'0_01_init_directory_structure.R'))
@@ -63,8 +62,8 @@ mice::densityplot(df_imput)
 
 mice::stripplot(df_imput, pch = c(21, 20), cex = c(1, 1.5))
 
-# GC: Please consider adding here the following title (to highlight the difference between these models and models in script D01): Main models excluding potential mediators (birth weight and child IQ).
-mod_outc_1_expo_1 <- lm(outcome_prof_1 ~ exposure_prof_1 + GENDER + age + mat_ed_lvl + HOMETOT + TSC_H + ethnicity + T3QT, # GC: just pay attention that variable B11 was also excluded, additional to WSC_DS, WSC_COD, WASI_PRI_C and WASI_VCI_C (I am not sure what B11 is, but just making sure it was intentional).
+
+mod_outc_1_expo_1 <- lm(outcome_prof_1 ~ exposure_prof_1 + GENDER + age + mat_ed_lvl + HOMETOT + TSC_H + ethnicity + T3QT,
                         data = data, 
                         na.action = na.omit)
 
@@ -191,7 +190,7 @@ dplyr::mutate(estimate = Beta.fit, std.error = Beta.se) %>%
   dplyr::mutate(model_name = fct_relevel(model_name, 
                                    rev(c("mod_outc_1_expo_1", "mod_outc_1_expo_2", "mod_outc_1_expo_3",
                                      "mod_outc_2_expo_1", "mod_outc_2_expo_2", "mod_outc_2_expo_3",
-                                     "mod_outc_3_expo_1", "mod_outc_3_expo_2", "mod_outc_3_expo_3")))) %>% # GC: instead of lines 192-194 you may use: rev(mods))) %>%
+                                     "mod_outc_3_expo_1", "mod_outc_3_expo_2", "mod_outc_3_expo_3")))) %>% 
   ggplot(aes(x = model_name, y = estimate, color = exposure_profile, shape=exposure_profile,
              ymin = estimate - 1.96*std.error,
              ymax = estimate + 1.96*std.error)) +
